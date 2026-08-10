@@ -1,0 +1,14 @@
+#!/command/with-contenv bash
+# The API. Same command the multi-container image runs, same user.
+set -euo pipefail
+
+cd /app
+
+# Shared with the migrate oneshot, which needs exactly the same thing. See that
+# file for why it is not inlined here.
+. /etc/s6-overlay/scripts/app-env
+
+# 127.0.0.1, not 0.0.0.0: nginx is the only thing that talks to this, and it is
+# in the same container. Binding it to every interface would publish the API
+# unproxied the moment somebody added `-p 8000:8000` to have a look at it.
+exec s6-setuidgid appuser uvicorn home_ops.main:app --host 127.0.0.1 --port 8000

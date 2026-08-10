@@ -1,0 +1,47 @@
+# Secrets — never commit (SPEC §2.2, §8.4)
+.env
+.env.local
+*.pem
+*.key
+
+# Database backups (SPEC §2.2)
+backups/
+
+# Exports brought in from other applications, to import from. A Mealie *backup*
+# in particular is not just recipes: it carries `data/.secret`,
+# `data/.session_secret`, and a users table with password hashes. §0 is explicit
+# that no secrets go in git, and a 12MB archive of somebody else's database is
+# not something to find in a diff.
+mealie_backup.zip
+mealie*.zip
+*-export.zip
+/import/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+.coverage
+htmlcov/
+
+# Node
+node_modules/
+dist/
+.vite/
+*.tsbuildinfo
+
+# Editors / OS
+.vscode/
+.idea/
+# Machine-local: absolute Windows paths and per-workstation tool permissions.
+# Shared .claude/ configuration, if any is ever added, is deliberately not
+# covered by this.
+.claude/settings.local.json
+.DS_Store
+Thumbs.db
+desktop.ini

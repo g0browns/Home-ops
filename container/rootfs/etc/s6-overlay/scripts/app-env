@@ -1,0 +1,22 @@
+# Sourced, not executed. Points the application at the database in THIS
+# container, and is shared by every service that opens a connection.
+#
+# Why it exists at all: `config.py` defaults POSTGRES_HOST to `db`, which is the
+# right answer for docker-compose.yml and meaningless here. Somebody deploying
+# this will bring the .env they already have, and that file says `db` — so
+# without this the app starts, reports healthy (liveness is deliberately
+# database-free) and then fails on the first real request with a name it cannot
+# resolve. This project has already lost an evening to that exact symptom from a
+# different cause; see the note about `7CtV@db` in CLAUDE.md.
+#
+# It is one file because two copies of it is one copy that gets forgotten — and
+# it *was* forgotten: the first boot of this image brought Postgres up correctly
+# and then failed in `migrate`, because only the api service had this logic.
+#
+# DATABASE_URL remains the documented escape hatch for "a database the
+# POSTGRES_* fields cannot describe". Set it and this steps aside entirely, which
+# is how you point this image at a Postgres you run elsewhere.
+if [ -z "${DATABASE_URL:-}" ]; then
+    export POSTGRES_HOST=127.0.0.1
+    export POSTGRES_PORT=5432
+fi

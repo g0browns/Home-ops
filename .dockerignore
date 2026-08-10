@@ -1,0 +1,60 @@
+# Build context for the single-container image (Dockerfile at the repo root).
+#
+# Two jobs. The obvious one is keeping the context small — `.git` and three
+# node_modules trees are most of a gigabyte and none of it reaches the image.
+#
+# The other is a Docker bug this project has already been bitten by, recorded in
+# CLAUDE.md: on this Docker version a build context containing BOTH a root
+# dotfile and a subdirectory fails outright with "changes out of order". It is
+# why the api and web builds use ./backend and ./frontend as their contexts
+# rather than the repository root. This image needs both directories, so it has
+# to use the root — and every root dotfile is excluded below to stay clear of it.
+
+.git
+.gitignore
+.gitattributes
+.dockerignore
+.env
+.env.*
+.claude
+.vscode
+.idea
+
+# Not built into this image.
+homeops-mobile/
+backups/
+docs/
+scripts/
+*.md
+
+# Read out of band by the client, so excluding them from the context loses
+# nothing and keeps the walk a little smaller.
+#
+# It does NOT fix `docker compose build` on Docker Desktop for Windows, which
+# fails with `changes out of order: "backend/alembic.ini"` while `docker build .`
+# on the identical context succeeds every time. Things tried and ruled out:
+# pruning the builder cache, COMPOSE_BAKE=false, removing the explicit
+# `dockerfile:` key, eliminating the two-`docker/`-directories path collision,
+# and an uppercase drive letter. Cause unknown. See the note in
+# docker-compose.single.yml for the two-step build that does work.
+Dockerfile
+docker-compose*.yml
+
+# Never useful in an image, and node_modules would be copied *over* the one
+# `npm install` creates in the build stage.
+**/node_modules
+**/dist
+**/.venv
+venv/
+**/__pycache__
+**/*.pyc
+**/.pytest_cache
+**/.ruff_cache
+**/.mypy_cache
+# An editable install leaves this in backend/src; it must not reach the image,
+# where pip does its own install.
+*.egg-info/
+.DS_Store
+
+# The suite runs against the dev stack, not this image.
+backend/tests

@@ -1,0 +1,84 @@
+#!/command/with-contenv bash
+# Prepare /data on first boot, and only on first boot.
+#
+# The volume arrives owned by root and empty. Everything that has to exist
+# before any daemon starts happens here: the two directories, their ownership,
+# and initdb if there is no cluster yet.
+#
+# It must be safe to run on EVERY boot, because it does. The guard is the
+# presence of PG_VERSION inside PGDATA — the same file Postgres itself uses to
+# decide whether a directory is a cluster. Guarding on "is the directory empty"
+# would re-initialise a cluster whose data had been moved aside, which is the
+# one mistake here that destroys a household's records.
+set -euo pipefail
+
+PGDATA="${PGDATA:-/data/postgres}"
+UPLOAD_ROOT="${UPLOAD_ROOT:-/data/uploads}"
+POSTGRES_USER="${POSTGRES_USER:-home_ops}"
+
+if [ -z "${POSTGRES_PASSWORD:-}" ] && [ -z "${DATABASE_URL:-}" ]; then
+    echo "init-data: POSTGRES_PASSWORD is not set. Copy .env.example to .env and set it" >&2
+    echo "init-data: BEFORE the first start -- Postgres bakes it in at initdb time." >&2
+    exit 1
+fi
+
+install -d -o postgres -g postgres -m 0700 "$PGDATA"
+install -d -o appuser -g appuser -m 0755 "$UPLOAD_ROOT"
+# The parent, so postgres can traverse to its own directory.
+chmod 0755 "$(dirname "$PGDATA")"
+
+if [ -s "$PGDATA/PG_VERSION" ]; then
+    echo "init-data: cluster already present at $PGDATA (version $(cat "$PGDATA/PG_VERSION"))"
+    exit 0
+fi
+
+echo "init-data: no cluster at $PGDATA -- running initdb"
+
+# The password reaches initdb through a file rather than an argument, so it
+# never appears in /proc/<pid>/cmdline where any process in the container could
+# read it. Removed immediately afterwards.
+pwfile="$(mktemp)"
+chmod 0600 "$pwfile"
+printf '%s' "$POSTGRES_PASSWORD" > "$pwfile"
+chown postgres:postgres "$pwfile"
+trap 'rm -f "$pwfile"' EXIT
+
+# --encoding=UTF8 --locale=C matches docker-compose.yml exactly. Index and sort
+# behaviour follows the collation, so a cluster initialised differently would
+# order text differently from the multi-container stack -- which is the kind of
+# difference that shows up as one wrong search result, months later.
+s6-setuidgid postgres initdb \
+    --pgdata="$PGDATA" \
+    --username="$POSTGRES_USER" \
+    --pwfile="$pwfile" \
+    --auth-local=scram-sha-256 \
+    --auth-host=scram-sha-256 \
+    --encoding=UTF8 \
+    --locale=C
+
+# Loopback only, and it is not a formality: this listens inside a container that
+# also runs a reverse proxy facing the network. Nothing outside the container
+# has any business reaching the database, and there is no supported way to.
+cat >> "$PGDATA/postgresql.conf" <<'CONF'
+
+# --- Home Ops -----------------------------------------------------------------
+# Written by init-data on first boot. The database is reachable only from
+# inside this container; the port is deliberately not published anywhere.
+listen_addresses = '127.0.0.1'
+port = 5432
+CONF
+
+cat > "$PGDATA/pg_hba.conf" <<'HBA'
+# Written by init-data on first boot.
+#
+# Local connections only, password-authenticated even over the unix socket:
+# "trust" on a socket would mean any process that got into this container is
+# already the database superuser.
+local   all   all                  scram-sha-256
+host    all   all   127.0.0.1/32   scram-sha-256
+host    all   all   ::1/128        scram-sha-256
+HBA
+chown postgres:postgres "$PGDATA/pg_hba.conf"
+chmod 0600 "$PGDATA/pg_hba.conf"
+
+echo "init-data: initdb complete"

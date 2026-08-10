@@ -1,0 +1,11 @@
+#!/command/with-contenv bash
+# The database.
+#
+# `exec` so postgres becomes this service's own process rather than a child of a
+# shell: s6 supervises what it started, and a shell in between means a crashed
+# postmaster leaves the shell alive and the service looking healthy.
+#
+# No `-h` here -- listen_addresses is written into postgresql.conf by init-data,
+# so the loopback-only rule lives with the cluster rather than in a command line
+# somebody could edit without noticing what it was for.
+exec s6-setuidgid postgres postgres -D "${PGDATA:-/data/postgres}"

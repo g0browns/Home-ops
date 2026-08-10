@@ -1,0 +1,294 @@
+/* =============================================================================
+   Design tokens — "Rota" (SPEC §6)
+   =============================================================================
+
+   The wall-planner direction. Every household member owns a hue that follows
+   them wherever they appear, so you find your own row by colour before you read
+   a word.
+
+   THE RULE: no component anywhere hardcodes a colour, a spacing value, a font
+   size or a radius. Everything comes from here, and tokens.discipline.test.ts
+   fails the build on a literal colour found anywhere but this file.
+
+   Both themes are hand-tuned, not inverted. Dark ("night shift") uses a
+   near-neutral charcoal rather than an inverted warm grey, and every member hue
+   is lifted separately so it still reads against a dark ground. Every
+   text-on-ground pair below is at or above WCAG AA — see tokens.contrast.test.ts,
+   which fails the build if a future edit breaks one.
+
+   COLOUR IS NEVER THE ONLY SIGNAL. Member hues are always accompanied by a name
+   or initials, and status is always accompanied by a word. Rota leans on colour
+   for *speed*, never for *meaning* — that is what keeps it usable for a
+   colour-blind member.
+   ========================================================================== */
+
+:root {
+  /* --- type ---------------------------------------------------------------
+     Archivo Narrow for UI: planners are always condensed, and it buys about two
+     more columns before anything truncates. Archivo (the wide cut) for prose
+     and numerals, where condensed becomes tiring to read. */
+  --font-ui: "Archivo Narrow", "Arial Narrow", system-ui, sans-serif;
+  --font-prose: "Archivo", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-data: "Archivo", system-ui, sans-serif;
+  /* For strings a person may have to read character by character or retype: an
+     API token, a hash, a header. Archivo's tabular figures align numerals but
+     do not disambiguate 0 from O or l from 1, which is the whole job here. */
+  --font-code: ui-monospace, "Cascadia Mono", "SF Mono", Menlo, Consolas, monospace;
+
+  /* 14px base: this is a dense application, not a document. */
+  --text-2xs: 0.6875rem; /* 11px — column heads, meta */
+  --text-xs: 0.75rem;    /* 12px — secondary */
+  --text-sm: 0.8125rem;  /* 13px — dense table rows */
+  --text-base: 0.875rem; /* 14px — default UI */
+  --text-md: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.375rem;
+  --text-2xl: 1.75rem;
+
+  --leading-tight: 1.2;
+  --leading-snug: 1.35;
+  --leading-normal: 1.5;
+  --leading-prose: 1.6;
+
+  --weight-normal: 400;
+  --weight-medium: 500;
+  --weight-semi: 600;
+  --weight-bold: 700;
+
+  --track-label: 0.08em;  /* uppercase column heads and nav */
+  --track-tight: -0.01em;
+
+  /* --- space --------------------------------------------------------------
+     Deliberately tight at the low end. SPEC §6 asks for density over
+     decorative whitespace. */
+  --space-1: 0.125rem;
+  --space-2: 0.25rem;
+  --space-3: 0.375rem;
+  --space-4: 0.5rem;
+  --space-5: 0.75rem;
+  --space-6: 1rem;
+  --space-7: 1.5rem;
+  --space-8: 2rem;
+  --space-9: 3rem;
+
+  /* --- radii --------------------------------------------------------------
+     Small on purpose. A planner is ruled and squared; rounded cards floating on
+     grey is precisely the look SPEC §6 rules out. */
+  --radius-none: 0;
+  --radius-sm: 2px;
+  --radius-md: 3px;
+  --radius-full: 999px;
+
+  /* --- structure ---------------------------------------------------------- */
+  --nav-width: 13.5rem;
+  --nav-width-collapsed: 3.25rem;
+  --header-height: 3rem;
+  --row-height: 2rem;
+  --member-bar: 3px; /* the colour bar on the leading edge of a row */
+  --border-width: 1px;
+
+  --transition-fast: 120ms ease;
+  --transition-nav: 160ms cubic-bezier(0.3, 0, 0.2, 1);
+
+  /* --- colour: light ("day") ---------------------------------------------- */
+  --bg: #edeeea;          /* cool oat — planner paper, not cream */
+  --bg-raised: #ffffff;
+  --bg-sunken: #e4e6e0;   /* the sidebar */
+  --bg-row-alt: rgba(0, 0, 0, 0.028);
+  --bg-hover: rgba(0, 0, 0, 0.05);
+  --bg-active: rgba(31, 93, 76, 0.1);
+  --scrim: rgba(0, 0, 0, 0.4); /* behind the nav drawer on narrow screens */
+
+  --text-primary: #1b1e1a;
+  --text-secondary: #5f6457;
+  --text-inverse: #f4f5f1;
+
+  --line: #cfd2c8;
+  --line-strong: #b9bdb1;
+
+  --accent: #1f5d4c;         /* deep planner green: today, primary action */
+  --accent-hover: #184a3d;
+  --accent-contrast: #ffffff; /* text on an accent fill */
+
+  --positive: #2c6b45;
+  --warning: #8a5e00;
+  --danger: #a8331d;
+
+  --focus-ring: #1f5d4c;
+  --focus-ring-offset: var(--bg);
+
+  /* --- member hues: light -------------------------------------------------
+     Six, chosen to stay distinguishable under the common colour-vision
+     deficiencies by varying lightness as well as hue. Each is AA against white
+     so a name can sit on top of it. Assigned round-robin on account creation;
+     `avatar_color` on the user row stores the KEY, never the hex. */
+  --member-clay: #c2452f;
+  --member-forest: #1f5d4c;
+  --member-ochre: #8a5e00;
+  --member-indigo: #3f4f8c;
+  --member-plum: #8a3a63;
+  --member-teal: #1c6070;
+  --member-on-hue: #ffffff; /* text on any member hue */
+
+  /* --- calendar hues -------------------------------------------------------
+     A calendar is a topic ("Work", "School"), and its hue fills the whole event
+     block rather than edging it. That is why this is a second palette and not
+     the member one reused: an event filled in a member's hue, carrying that
+     member's initials mark, would be colour-on-colour and the mark would
+     vanish. Deliberately duskier than the member hues and pitched at the hue
+     angles *between* them, so the two sets read as different families. Every
+     one carries `--calendar-on-hue` and steps in lightness as well as hue. */
+  --calendar-violet: #4a2d63;
+  --calendar-slate: #3f5266;
+  --calendar-graphite: #565d63;
+  --calendar-brick: #9b3d49;
+  --calendar-rust: #a25c2c;
+  --calendar-moss: #647a4c;
+  --calendar-on-hue: #ffffff; /* text on any calendar fill */
+}
+
+/* -----------------------------------------------------------------------------
+   Dark ("night shift"). Its own palette, not an inversion: a near-neutral
+   charcoal ground, and every hue lifted so it holds against it. Text on member
+   hues flips to the dark ground colour, because a lifted hue is too bright to
+   carry white.
+   -------------------------------------------------------------------------- */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #16181a;
+    --bg-raised: #1e2124;
+    --bg-sunken: #101214;
+    --bg-row-alt: rgba(255, 255, 255, 0.035);
+    --bg-hover: rgba(255, 255, 255, 0.06);
+    --bg-active: rgba(95, 191, 163, 0.14);
+    --scrim: rgba(0, 0, 0, 0.6);
+
+    --text-primary: #e9ece6;
+    --text-secondary: #96a092;
+    --text-inverse: #16181a;
+
+    --line: #2b2f32;
+    --line-strong: #3d4245;
+
+    --accent: #5fbfa3;
+    --accent-hover: #77cdb4;
+    --accent-contrast: #10201b;
+
+    --positive: #6bb789;
+    --warning: #d4a03a;
+    --danger: #e8735a;
+
+    --focus-ring: #5fbfa3;
+
+    --member-clay: #e8735a;
+    --member-forest: #5fbfa3;
+    --member-ochre: #d4a03a;
+    --member-indigo: #8f9fd8;
+    --member-plum: #d489ac;
+    --member-teal: #63b3c6;
+    --member-on-hue: #16181a;
+    /* Desaturated from the first attempt, which put six saturated pastels on a
+       near-black page and read as glare. The *lightness* cannot come down: a
+       fill has to reach AA-large against the grid behind it and carry body
+       text on top, which pins each one inside a narrow band — so the lever is
+       chroma, not brightness, and these are the same luminances with the
+       colour taken out of them. The palette still steps in lightness, which
+       `tokens.contrast.test.ts` checks at 2× across the set. */
+    --calendar-violet: #8f83a0;
+    --calendar-slate: #93a3b0;
+    --calendar-brick: #c08f98;
+    --calendar-graphite: #a8aeb3;
+    --calendar-rust: #ceaa8b;
+    --calendar-moss: #c2cfb4;
+    --calendar-on-hue: #16181a;
+  }
+}
+
+/* The viewer's explicit choice must win over the OS preference in BOTH
+   directions, so each theme is restated rather than only the dark one. */
+:root[data-theme="dark"] {
+  --bg: #16181a;
+  --bg-raised: #1e2124;
+  --bg-sunken: #101214;
+  --bg-row-alt: rgba(255, 255, 255, 0.035);
+  --bg-hover: rgba(255, 255, 255, 0.06);
+  --bg-active: rgba(95, 191, 163, 0.14);
+  --scrim: rgba(0, 0, 0, 0.6);
+
+  --text-primary: #e9ece6;
+  --text-secondary: #96a092;
+  --text-inverse: #16181a;
+
+  --line: #2b2f32;
+  --line-strong: #3d4245;
+
+  --accent: #5fbfa3;
+  --accent-hover: #77cdb4;
+  --accent-contrast: #10201b;
+
+  --positive: #6bb789;
+  --warning: #d4a03a;
+  --danger: #e8735a;
+
+  --focus-ring: #5fbfa3;
+
+  --member-clay: #e8735a;
+  --member-forest: #5fbfa3;
+  --member-ochre: #d4a03a;
+  --member-indigo: #8f9fd8;
+  --member-plum: #d489ac;
+  --member-teal: #63b3c6;
+  --member-on-hue: #16181a;
+  /* Kept identical to the media-query block above, which explains why these
+     are desaturated rather than darkened. `tokens.contrast.test.ts` asserts
+     the two dark declarations match, which is how this was caught. */
+  --calendar-violet: #8f83a0;
+  --calendar-slate: #93a3b0;
+  --calendar-brick: #c08f98;
+  --calendar-graphite: #a8aeb3;
+  --calendar-rust: #ceaa8b;
+  --calendar-moss: #c2cfb4;
+  --calendar-on-hue: #16181a;
+}
+
+:root[data-theme="light"] {
+  --bg: #edeeea;
+  --bg-raised: #ffffff;
+  --bg-sunken: #e4e6e0;
+  --bg-row-alt: rgba(0, 0, 0, 0.028);
+  --bg-hover: rgba(0, 0, 0, 0.05);
+  --bg-active: rgba(31, 93, 76, 0.1);
+  --scrim: rgba(0, 0, 0, 0.4);
+
+  --text-primary: #1b1e1a;
+  --text-secondary: #5f6457;
+  --text-inverse: #f4f5f1;
+
+  --line: #cfd2c8;
+  --line-strong: #b9bdb1;
+
+  --accent: #1f5d4c;
+  --accent-hover: #184a3d;
+  --accent-contrast: #ffffff;
+
+  --positive: #2c6b45;
+  --warning: #8a5e00;
+  --danger: #a8331d;
+
+  --focus-ring: #1f5d4c;
+
+  --member-clay: #c2452f;
+  --member-forest: #1f5d4c;
+  --member-ochre: #8a5e00;
+  --member-indigo: #3f4f8c;
+  --member-plum: #8a3a63;
+  --member-teal: #1c6070;
+  --member-on-hue: #ffffff;
+  --calendar-violet: #4a2d63;
+  --calendar-slate: #3f5266;
+  --calendar-graphite: #565d63;
+  --calendar-brick: #9b3d49;
+  --calendar-rust: #a25c2c;
+  --calendar-moss: #647a4c;
+  --calendar-on-hue: #ffffff; /* text on any calendar fill */
+}

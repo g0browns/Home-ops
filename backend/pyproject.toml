@@ -1,0 +1,114 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "home-ops"
+version = "0.1.0"
+description = "Self-hosted household management system"
+requires-python = ">=3.12"
+dependencies = [
+    "argon2-cffi>=23.1",
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.32",
+    "sqlalchemy>=2.0.36",
+    "alembic>=1.14",
+    "psycopg[binary]>=3.2",
+    # RRULE expansion for recurring tasks (SPEC §4.4) and, later, the calendar.
+    # Never hand-roll recurrence — SPEC §4.3 says so explicitly.
+    "python-dateutil>=2.9",
+    "pydantic>=2.9",
+    # >=2.7 for NoDecode, which config.py needs to accept comma-separated lists.
+    "pydantic-settings>=2.7",
+    # vCard parsing and serialising (SPEC 4.7). The same argument SPEC 4.3 makes
+    # about RFC 5545 applies to RFC 6350: line unfolding, escaping, grouped
+    # properties, 2.1 quoted-printable and charset parameters are exactly where
+    # a hand-rolled parser goes wrong, and import reads a file somebody else's
+    # phone wrote. Both directions go through it, so export cannot disagree with
+    # import.
+    "vobject>=0.9.9",
+    # Recipe images (SPEC 4.6). Used to decide what an upload really is and to
+    # re-encode it, which is what strips EXIF and defuses a polyglot file --
+    # never to pass bytes through untouched.
+    "pillow>=11.0",
+    # FastAPI needs this to accept multipart/form-data at all.
+    "python-multipart>=0.0.20",
+    # Recipe import fetches a URL the user typed (SPEC 4.6). See urlfetch.py for
+    # what that costs and how it is contained -- httpx is used because it can be
+    # told to connect to a vetted IP while keeping the hostname for SNI and the
+    # Host header, which is what closes the DNS-rebinding window. The package is
+    # httpx2 and imports as `httpx2`; it was already a dev dependency because
+    # starlette's TestClient needs it.
+    "httpx2",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.3",
+    # starlette's TestClient has deprecated httpx 0.x in favour of httpx2.
+    "httpx2",
+    "ruff>=0.8",
+    "mypy>=1.13",
+    "types-python-dateutil>=2.9",
+    "types-vobject",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/home_ops"]
+
+# -----------------------------------------------------------------------------
+# Lint / format
+# -----------------------------------------------------------------------------
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = ["src", "tests"]
+extend-exclude = ["migrations/versions"]
+
+[tool.ruff.lint]
+select = [
+    "E", "W",   # pycodestyle
+    "F",        # pyflakes
+    "I",        # import sorting
+    "UP",       # pyupgrade
+    "B",        # bugbear
+    "SIM",      # simplify
+    "S",        # bandit — security
+    "ASYNC",    # async pitfalls
+    "RUF",
+]
+
+[tool.ruff.lint.per-file-ignores]
+# Asserts and hardcoded test credentials are the point in a test suite.
+"tests/**" = ["S101", "S105", "S106", "S608"]
+
+# The API-guide generator embeds PowerShell and curl examples as string
+# literals, where a line break is part of the sample rather than formatting.
+# Rewrapping them to satisfy a Python line-length rule would change what a
+# reader copies out of the docs, so E501 is off for that file and only that
+# file. S310 is the urlopen that fetches the schema -- the URL is a constant
+# defaulting to localhost, or an argument the operator typed.
+"../scripts/gen_api_docs.py" = ["E501", "S310"]
+"scripts/gen_api_docs.py" = ["E501", "S310"]
+
+# -----------------------------------------------------------------------------
+# Types — strict, but only over the application package. Migrations are
+# generated code and tests are exercised by running them.
+# -----------------------------------------------------------------------------
+[tool.mypy]
+python_version = "3.12"
+strict = true
+mypy_path = "src"
+packages = ["home_ops"]
+warn_unreachable = true
+
+# -----------------------------------------------------------------------------
+# Tests
+# -----------------------------------------------------------------------------
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q --strict-markers --strict-config"
+# Written outside /app so the non-root container user always has somewhere to
+# write, regardless of bind-mount ownership on the host.
+cache_dir = "/tmp/pytest_cache"
+filterwarnings = ["error"]

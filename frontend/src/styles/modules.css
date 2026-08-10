@@ -1,0 +1,3045 @@
+/* Styles for the feature modules (Phase 3 onward).
+   Tokens only — tokens.discipline.test.ts fails the build on a literal colour. */
+
+/* --- toolbars and controls -------------------------------------------------- */
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+  flex-wrap: wrap;
+}
+
+.segmented {
+  display: inline-flex;
+  border: var(--border-width) solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+.segmented button {
+  padding: var(--space-3) var(--space-5);
+  background: var(--bg-raised);
+  border: 0;
+  border-right: var(--border-width) solid var(--line);
+  color: var(--text-secondary);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  font-weight: var(--weight-semi);
+}
+.segmented button:last-child {
+  border-right: 0;
+}
+.segmented button:hover:not(:disabled) {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+.segmented button[aria-pressed="true"] {
+  background: var(--bg-active);
+  color: var(--accent);
+}
+/* A household setting a read-only member may see and not change. Without the
+   :not() above, a dead segment still lit up on hover and read as clickable. */
+.segmented button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.check {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+.check input {
+  accent-color: var(--accent);
+}
+
+.search,
+.toolbar select,
+.quick-add input,
+.quick-add select,
+.settings-row input,
+textarea {
+  padding: var(--space-3) var(--space-4);
+  background: var(--bg-raised);
+  border: var(--border-width) solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+}
+.search {
+  min-width: 16rem;
+  flex: 1 1 16rem;
+}
+textarea {
+  width: 100%;
+  font-family: var(--font-prose);
+  line-height: var(--leading-prose);
+  resize: vertical;
+}
+
+.quick-add {
+  display: flex;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  padding: var(--space-5);
+  background: var(--bg-raised);
+  border: var(--border-width) solid var(--line);
+  border-radius: var(--radius-md);
+}
+.quick-add input[name="title"] {
+  flex: 1 1 18rem;
+}
+
+.notice {
+  padding: var(--space-4) var(--space-5);
+  border-left: var(--member-bar) solid var(--accent);
+  background: var(--bg-active);
+  font-size: var(--text-sm);
+}
+
+.empty {
+  padding: var(--space-8) var(--space-6);
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+  border: var(--border-width) dashed var(--line-strong);
+  border-radius: var(--radius-md);
+}
+
+.overdue {
+  color: var(--danger);
+  font-weight: var(--weight-semi);
+}
+table.data tbody tr[data-done="true"] .cell-name {
+  color: var(--text-secondary);
+}
+.row-actions {
+  display: flex;
+  gap: var(--space-2);
+  justify-content: flex-end;
+}
+.assignees {
+  display: inline-flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.link-button {
+  background: none;
+  border: 0;
+  padding: 0 var(--space-2);
+  color: var(--text-secondary);
+  font-size: var(--text-2xs);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+.link-button:hover {
+  color: var(--danger);
+}
+
+/* --- kanban board ----------------------------------------------------------- */
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-5);
+  align-items: start;
+}
+@media (max-width: 60rem) {
+  .board {
+    grid-template-columns: 1fr;
+  }
+}
+
+.board-column {
+  background: var(--bg-sunken);
+  border: var(--border-width) solid var(--line);
+  border-radius: var(--radius-md);
+  min-width: 0;
+}
+.board-column-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: var(--space-4) var(--space-5);
+  border-bottom: var(--border-width) solid var(--line);
+}
+.board-column-head h2 {
+  font-size: var(--text-2xs);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+.board-cards {
+  list-style: none;
+  margin: 0;
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+.board-empty {
+  color: var(--text-secondary);
+  font-size: var(--text-xs);
+  padding: var(--space-4);
+}
+
+.card {
+  display: flex;
+  background: var(--bg-raised);
+  border: var(--border-width) solid var(--line);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+.card-bar {
+  width: var(--member-bar);
+  flex: none;
+}
+.card-body {
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-width: 0;
+  flex: 1 1 auto;
+}
+.card-title {
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  margin: 0;
+}
+.card-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  font-size: var(--text-2xs);
+}
+
+.card-actions,
+.note-actions,
+.editor-actions {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+.card-actions button,
+.note-actions button,
+.editor-actions button:not(.button) {
+  padding: var(--space-2) var(--space-4);
+  background: transparent;
+  border: var(--border-width) solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+}
+.card-actions button:hover,
+.note-actions button:hover,
+.editor-actions button:not(.button):hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+/* --- notes board ------------------------------------------------------------ */
+
+.note-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
+  gap: var(--space-5);
+  align-items: start;
+}
+
+.note {
+  display: flex;
+  background: var(--bg-raised);
+  border: var(--border-width) solid var(--line);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+.note[data-pinned="true"] {
+  border-color: var(--accent);
+}
+.note-bar {
+  width: var(--member-bar);
+  flex: none;
+}
+.note-body {
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-width: 0;
+  flex: 1 1 auto;
+}
+.note-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+.note-head h2 {
+  font-size: var(--text-base);
+}
+.note-preview {
+  font-family: var(--font-prose);
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  line-height: var(--leading-snug);
+  margin: 0;
+}
+.note-meta {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+/* --- rendered markdown ------------------------------------------------------
+   The HTML has already been through DOMPurify in lib/markdown.ts. These styles
+   only need to make it legible; they are not a security boundary. */
+
+.markdown {
+  font-family: var(--font-prose);
+  font-size: var(--text-sm);
+  line-height: var(--leading-prose);
+}
+.markdown > :first-child {
+  margin-top: 0;
+}
+.markdown h1,
+.markdown h2,
+.markdown h3 {
+  font-family: var(--font-ui);
+  margin: var(--space-5) 0 var(--space-3);
+}
+.markdown h1 {
+  font-size: var(--text-md);
+}
+.markdown h2 {
+  font-size: var(--text-base);
+}
+.markdown h3 {
+  font-size: var(--text-sm);
+}
+.markdown p,
+.markdown ul,
+.markdown ol,
+.markdown blockquote {
+  margin: 0 0 var(--space-4);
+}
+.markdown ul,
+.markdown ol {
+  padding-left: var(--space-7);
+}
+.markdown code {
+  font-family: var(--font-data);
+  font-size: 0.9em;
+  background: var(--bg-sunken);
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-sm);
+}
+.markdown pre {
+  background: var(--bg-sunken);
+  padding: var(--space-4);
+  border-radius: var(--radius-sm);
+  overflow-x: auto;
+}
+.markdown pre code {
+  background: none;
+  padding: 0;
+}
+.markdown blockquote {
+  border-left: var(--member-bar) solid var(--line-strong);
+  padding-left: var(--space-5);
+  color: var(--text-secondary);
+}
+.markdown table {
+  border-collapse: collapse;
+  width: 100%;
+}
+.markdown th,
+.markdown td {
+  border: var(--border-width) solid var(--line);
+  padding: var(--space-2) var(--space-4);
+  text-align: left;
+}
+
+.note-editor {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  padding: var(--space-6);
+  background: var(--bg-raised);
+  border: var(--border-width) solid var(--line-strong);
+  border-radius: var(--radius-md);
+}
+.editor-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+.editor-preview {
+  min-height: 12rem;
+  padding: var(--space-4);
+  border: var(--border-width) dashed var(--line-strong);
+  border-radius: var(--radius-sm);
+}
+.editor-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: var(--space-5);
+}
+
+/* --- settings --------------------------------------------------------------- */
+
+.settings-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  padding-bottom: var(--space-6);
+  border-bottom: var(--border-width) solid var(--line);
+}
+.settings-section h2 {
+  font-size: var(--text-md);
+}
+.settings-row {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+.settings-row .field {
+  flex: 1 1 16rem;
+}
+.field-label {
+  font-size: var(--text-2xs);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  font-weight: var(--weight-semi);
+}
+.chip-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+.chip-list li {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* --- drag and drop ----------------------------------------------------------
+   Feedback only. Every drag interaction also has a keyboard equivalent — the
+   Start/Done buttons on a board card, the arrows on a note — because HTML5
+   drag-and-drop is pointer-only and SPEC §6 asks for real keyboard navigation. */
+
+.card[draggable="true"],
+.note[draggable="true"] {
+  cursor: grab;
+}
+.card[data-dragging="true"],
+.note[data-dragging="true"] {
+  opacity: 0.4;
+  cursor: grabbing;
+}
+
+/* The column about to receive a card. */
+.board-column[data-receiving="true"] {
+  border-color: var(--accent);
+  background: var(--bg-active);
+}
+
+/* The note a dragged card would displace. */
+.note[data-over="true"] {
+  outline: 2px dashed var(--accent);
+  outline-offset: 2px;
+}
+
+.note-head-actions {
+  display: flex;
+  gap: var(--space-1);
+  flex: none;
+}
+.note-head-actions .icon-button:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.reorder-hint {
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/* --- assignee picker --------------------------------------------------------- */
+
+.assignee-picker,
+.scope-picker {
+  border: var(--border-width) solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: var(--space-4) var(--space-5) var(--space-5);
+  margin: 0;
+}
+.assignee-picker legend,
+.scope-picker legend {
+  font-size: var(--text-2xs);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  font-weight: var(--weight-semi);
+  padding: 0 var(--space-3);
+}
+.assignee-options {
+  display: flex;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+.assignee-option {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-4);
+  border: var(--border-width) solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
+  cursor: pointer;
+}
+.assignee-option[data-chosen="true"] {
+  border-color: var(--accent);
+  background: var(--bg-active);
+}
+.assignee-option input {
+  accent-color: var(--accent);
+}
+
+/* --- calendar (SPEC 4.3) -----------------------------------------------------
+   A wall planner. An event is a BAR spanning every day it covers, filled with
+   its calendar's hue: a three-day trip is one element three columns wide, not
+   three chips that happen to sit near each other. Crossing a week boundary
+   restarts the bar on the next row with a squared-off edge. */
+
+.month-nav {
+  display: inline-flex;
+}
+.month-nav button {
+  min-width: 2rem;
+  padding: var(--space-3) var(--space-4);
+  font: inherit;
+  font-size: var(--text-xs);
+  color: var(--text-primary);
+  background: var(--bg-raised);
+  border: var(--border-width) solid var(--line-strong);
+  border-right-width: 0;
+  cursor: pointer;
+}
+.month-nav button:last-child {
+  border-right-width: var(--border-width);
+}
+.month-nav button:hover {
+  background: var(--bg-hover);
+}
+
+/* What each fill means. Shown only once a household has more than one
+   calendar, since one colour carries no information. */
+.calendar-key {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3) var(--space-6);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+}
+.calendar-key li {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+.key-swatch {
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: var(--radius-sm);
+  flex: none;
+}
+
+.month {
+  display: flex;
+  flex-direction: column;
+  border: var(--border-width) solid var(--line-strong);
+  border-radius: var(--radius-md);
+  background: var(--bg-raised);
+  overflow: hidden;
+  /* A flex item's `min-width` is `auto`, so without these the grid pushes .page
+     wider than the viewport. */
+  min-width: 0;
+  max-width: 100%;
+  /* Load-bearing, and not obviously so. `overflow` only clips an absolutely
+     positioned descendant when the clipping box is also its containing block -
+     and .visually-hidden is `position: absolute`. Without this the
+     screen-reader labels on the day-add buttons resolve against <html>, sit
+     300px past the right edge, and the whole document scrolls sideways at 420px
+     while .month's own scroller sits there doing nothing. .table-frame on
+     /tasks had exactly this bug; it measured as 719px wide on a 420px
+     viewport. */
+  position: relative;
+}
+
+.month-head {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  border-bottom: var(--border-width) solid var(--line-strong);
+  background: var(--bg-sunken);
+}
+.month-head span {
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--text-2xs);
+  font-weight: var(--weight-semi);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.month-body {
+  display: flex;
+  flex-direction: column;
+}
+
+/* One week. The day backgrounds span every row so the banding is unbroken; the
+   bars sit on top in their own lanes. `grid-template-rows` is set inline
+   because the lane count is only known once the week has been laid out. */
+.month-week {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  min-height: 6.5rem;
+  row-gap: var(--space-1);
+  padding-bottom: var(--space-3);
+}
+
+.month-cell {
+  min-width: 0;
+  border-top: var(--border-width) solid var(--line);
+  border-left: var(--border-width) solid var(--line);
+}
+.month-week:first-child .month-cell {
+  border-top: 0;
+}
+.month-cell:first-child {
+  border-left: 0;
+}
+/* The days either side of this month: present for context, quiet enough not to
+   be mistaken for part of it.
+   
+   `--bg-sunken`, not `--bg-row-alt`. The row-alt token is a *lightening* in
+   dark mode (rgba white 3.5%), so the days outside the month glowed and the
+   month itself receded — the emphasis exactly inverted, and the brightest
+   thing on a dark screen being the part you are not looking at. Sunken is
+   darker than the page in both themes, so "outside" recedes in both. */
+.month-cell[data-outside="true"] {
+  background: var(--bg-sunken);
+}
+/* One pixel, not two, and a tint behind it. A 2px ring in the accent around a
+   whole day is the loudest thing on the grid, and today is worth pointing at,
+   not shouting about. */
+.month-cell[data-today="true"] {
+  box-shadow: inset 0 0 0 1px var(--accent);
+  background: var(--bg-active);
+}
+
+.month-cell-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-3) var(--space-2);
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+  /* Above the background cell, which occupies the same grid area. */
+  z-index: 1;
+}
+.month-cell-head[data-today="true"] {
+  font-weight: var(--weight-bold);
+  color: var(--accent);
+}
+.month-cell-head[data-outside="true"] {
+  opacity: 0.7;
+}
+
+.day-add {
+  opacity: 0;
+  padding: 0 var(--space-2);
+  font: inherit;
+  line-height: 1;
+  color: var(--text-secondary);
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+.month-week:hover .day-add,
+.day-add:focus-visible {
+  opacity: 1;
+}
+
+/* The bar's grid area. The padding is what keeps adjacent bars from touching
+   across a column boundary, so a Monday event and a Tuesday event still read as
+   two things. */
+.month-span {
+  min-width: 0;
+  padding: 0 var(--space-2);
+  z-index: 1;
+}
+
+.chip-event,
+.chip-task {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  padding: var(--space-1) var(--space-3);
+  font: inherit;
+  font-size: var(--text-xs);
+  text-align: left;
+  border: 0;
+  border-radius: var(--radius-sm);
+}
+
+/* Solid fill in the calendar's hue, with text in the one colour guaranteed to
+   sit on any of them. */
+.chip-event {
+  background: var(--event-hue, var(--text-secondary));
+  color: var(--calendar-on-hue);
+  cursor: pointer;
+}
+.chip-event:hover {
+  /* Darkening the fill would need a second token per hue. Lifting the whole bar
+     instead keeps one fill per calendar and still reads as interactive. */
+  filter: brightness(1.12);
+}
+
+/* A bar cut by the week boundary keeps its square edge on that side, so it
+   reads as continuing rather than as a separate event that happens to start on
+   Monday. */
+.chip-event[data-continues-before="true"] {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  padding-left: var(--space-2);
+}
+.chip-event[data-continues-after="true"] {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  padding-right: var(--space-2);
+}
+
+.chip-time {
+  flex: none;
+  font-size: var(--text-2xs);
+  opacity: 0.85;
+}
+.chip-title {
+  /* One line, ellipsised. A wrapped title would push the lane taller and the
+     bars on either side of it would stop lining up. */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+.chip-repeat {
+  flex: none;
+  font-size: var(--text-2xs);
+  opacity: 0.85;
+}
+
+/* A task is a deadline, not an appointment: outlined rather than filled, so the
+   difference survives being printed in black and white. */
+.chip-task {
+  background: none;
+  color: var(--text-secondary);
+  border: var(--border-width) dashed var(--line-strong);
+}
+.chip-task[data-done="true"] .chip-title {
+  text-decoration: line-through;
+}
+
+/* --- agenda -----------------------------------------------------------------
+   The same colour rule as the grid: the fill is the calendar. Here it is a
+   leading block rather than the whole row, because a row of running prose on a
+   saturated ground is harder to read than a grid chip. */
+
+.agenda {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+.agenda-day h2 {
+  font-size: var(--text-2xs);
+  font-weight: var(--weight-semi);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  padding-bottom: var(--space-3);
+  border-bottom: var(--border-width) solid var(--line);
+}
+.agenda-day ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.agenda-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+  width: 100%;
+  min-height: var(--row-height);
+  padding: var(--space-3) var(--space-4) var(--space-3) 0;
+  font: inherit;
+  font-size: var(--text-sm);
+  text-align: left;
+  color: var(--text-primary);
+  background: none;
+  border: 0;
+  border-bottom: var(--border-width) solid var(--line);
+  cursor: pointer;
+}
+.agenda-row:hover {
+  background: var(--bg-hover);
+}
+.agenda-row-task {
+  cursor: default;
+}
+.agenda-row-task:hover {
+  background: none;
+}
+
+/* Time, title and people share one filled block so the fill is a single shape
+   rather than three.
+
+   Sized to its content, not to the row. A page of full-width saturated bars
+   reads as a stack of banners rather than a list, and it strands the location
+   and the repeat badge outside the fill looking like leftovers. The time column
+   is a fixed width, so titles still line up down the page. */
+.agenda-fill {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  flex: 0 1 auto;
+  min-width: 0;
+  max-width: min(42rem, 100%);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-sm);
+  background: var(--event-hue, var(--text-secondary));
+  color: var(--calendar-on-hue);
+}
+.agenda-row-task .agenda-fill {
+  background: none;
+  color: var(--text-secondary);
+  border: var(--border-width) dashed var(--line-strong);
+}
+.agenda-time {
+  flex: none;
+  width: 4.5rem;
+  opacity: 0.85;
+}
+.agenda-title {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: var(--weight-medium);
+}
+.agenda-where {
+  flex: none;
+}
+.agenda-people {
+  display: inline-flex;
+  flex: none;
+  gap: var(--space-2);
+}
+/* A member mark sits on the calendar's fill, so it needs its own edge or the
+   two colours meet with nothing between them. */
+.agenda-people .member-mark {
+  box-shadow: 0 0 0 1px var(--calendar-on-hue);
+}
+
+/* --- edit scope ------------------------------------------------------------- */
+
+.scope-options {
+  display: flex;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+.scope-option {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  flex: 1 1 12rem;
+  padding: var(--space-4) var(--space-5);
+  border: var(--border-width) solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+/* Two classes deep on purpose. These are <label>s inside a .field, so they pick
+   up `.field label` — the uppercase, letter-spaced treatment meant for one-word
+   captions. A sentence of guidance set that way ("LEAVES THE REST OF THE SERIES
+   ALONE") reads as shouting at exactly the moment the user is being asked to be
+   careful. A single `.scope-option` selector loses the cascade to `.field
+   label`, which is one class *and* one type. */
+.scope-picker .scope-option {
+  text-transform: none;
+  letter-spacing: normal;
+  color: var(--text-primary);
+  font-weight: var(--weight-normal);
+}
+.scope-option[data-chosen="true"] {
+  border-color: var(--accent);
+  background: var(--bg-active);
+}
+.scope-option input {
+  margin-top: var(--space-1);
+  accent-color: var(--accent);
+}
+.scope-option strong {
+  display: block;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semi);
+}
+.scope-option small {
+  display: block;
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+}
+
+/* On a phone the seven-column grid stops being readable long before it stops
+   fitting, so the agenda is the honest view. The month grid is still reachable
+   and scrolls as one block rather than squeezing columns to nothing. */
+@media (max-width: 47rem) {
+  .month {
+    overflow-x: auto;
+  }
+  .month-head,
+  .month-grid {
+    min-width: 44rem;
+  }
+}
+
+/* --- calendars in settings --------------------------------------------------- */
+
+.calendar-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+.calendar-list li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+.calendar-name {
+  font-weight: var(--weight-medium);
+  min-width: 8rem;
+}
+.calendar-list select {
+  padding: var(--space-2) var(--space-3);
+  background: var(--bg-raised);
+  border: var(--border-width) solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-xs);
+  color: var(--text-primary);
+}
+
+/* The event editor's calendar picker carries the colour the event will take,
+   so the choice is visible while making it rather than only after saving. */
+select.with-swatch {
+  border-left: var(--space-4) solid var(--event-hue, var(--text-secondary));
+}
+
+/* --- kitchen: recipes (SPEC 4.6) ---------------------------------------------
+   A recipe is a document you read with your hands full, so the reading view is
+   generous: large type for the method, ingredients in a column beside it, and
+   the servings control right where the quantities are. */
+
+.recipe-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+  gap: var(--space-5);
+  align-items: start;
+}
+
+.recipe-card {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 0;
+  font: inherit;
+  text-align: left;
+  color: var(--text-primary);
+  background: var(--bg-raised);
+  border: var(--border-width) solid var(--line);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  cursor: pointer;
+}
+.recipe-card:hover {
+  border-color: var(--accent);
+}
+
+.recipe-thumb {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 4 / 3;
+  background: var(--bg-sunken);
+  overflow: hidden;
+}
+.recipe-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+/* A recipe with no picture is normal; it should read as "no photo", not as a
+   photo that failed to load. */
+.recipe-thumb-empty {
+  font-size: var(--text-2xl);
+  color: var(--line-strong);
+}
+
+.recipe-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  min-width: 0;
+}
+.recipe-card-title {
+  font-family: var(--font-ui);
+  font-size: var(--text-base);
+  font-weight: var(--weight-semi);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.recipe-card-meta {
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+}
+.recipe-card-tags {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+/* --- reading a recipe ------------------------------------------------------- */
+
+.recipe {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-7);
+}
+.recipe-head {
+  display: flex;
+  gap: var(--space-7);
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+.recipe-head > div {
+  flex: 1 1 20rem;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+/* One size and one shape, whatever was uploaded.
+
+   This was rendering at the image's natural size — 732x1097 for a portrait
+   photo — and identically at every viewport, because `flex-basis` was being
+   ignored. A flex item's automatic minimum size is its *content* size, and for
+   a replaced element that is the image's intrinsic width, which floored it at
+   730px and made the basis irrelevant. `min-width: 0` is what lets a stated
+   width mean anything here. Same trap as elsewhere in this file, in a form
+   that only shows up on images. */
+.recipe-photo {
+  flex: none;
+  width: 18rem;
+  max-width: 100%;
+  min-width: 0;
+  /* Fixed shape plus `cover`: a portrait photo is cropped rather than making
+     one recipe three times taller than the next. Heights varied by 562px
+     across three recipes before this. */
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+  border: var(--border-width) solid var(--line);
+}
+.recipe-description {
+  font-family: var(--font-prose);
+  font-size: var(--text-base);
+  color: var(--text-secondary);
+  margin: 0;
+  max-width: 60ch;
+}
+.recipe-meta {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  margin: 0;
+}
+.recipe-source {
+  margin: 0;
+  font-size: var(--text-sm);
+}
+
+.recipe-columns {
+  display: grid;
+  /* The ingredient column is fixed-ish and the method takes the rest: a
+     shopping-style list next to running prose is how a cookbook sets a page. */
+  grid-template-columns: minmax(15rem, 22rem) minmax(0, 1fr);
+  gap: var(--space-8);
+  align-items: start;
+}
+@media (max-width: 56rem) {
+  .recipe-columns {
+    grid-template-columns: 1fr;
+  }
+}
+
+.recipe-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  padding-bottom: var(--space-4);
+  border-bottom: var(--border-width) solid var(--line);
+}
+.recipe-ingredients h2,
+.recipe-steps h2 {
+  font-size: var(--text-md);
+}
+.recipe-steps h2 {
+  padding-bottom: var(--space-4);
+  border-bottom: var(--border-width) solid var(--line);
+}
+
+.servings {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-4);
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+.servings button {
+  width: 1.75rem;
+  height: 1.75rem;
+  font: inherit;
+  font-size: var(--text-md);
+  line-height: 1;
+  color: var(--text-primary);
+  background: var(--bg-raised);
+  border: var(--border-width) solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+.servings button:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.servings button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.ingredient-list {
+  list-style: none;
+  margin: var(--space-5) 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+.ingredient-list li {
+  display: flex;
+  gap: var(--space-4);
+  padding: var(--space-3) 0;
+  font-size: var(--text-base);
+  border-bottom: var(--border-width) solid var(--line);
+}
+.ingredient-amount {
+  flex: none;
+  /* Fixed so the names line up down the page even as quantities change width
+     while the servings control is being dragged. */
+  width: 6rem;
+  font-weight: var(--weight-semi);
+}
+.ingredient-name {
+  min-width: 0;
+}
+
+.step-list {
+  margin: var(--space-5) 0 0;
+  padding-left: var(--space-7);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  font-family: var(--font-prose);
+  font-size: var(--text-base);
+  line-height: var(--leading-prose);
+}
+.step-list li::marker {
+  font-family: var(--font-ui);
+  font-weight: var(--weight-bold);
+  color: var(--accent);
+}
+
+/* A step you can strike off while cooking. The whole step is the target: wet
+   hands and a phone on the counter do not want a 16px checkbox. */
+.step-list button {
+  display: block;
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  margin-left: calc(var(--space-3) * -1);
+  font: inherit;
+  font-family: var(--font-prose);
+  font-size: var(--text-base);
+  line-height: var(--leading-prose);
+  text-align: left;
+  color: inherit;
+  background: none;
+  border: 0;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+.step-list button:hover {
+  background: var(--bg-hover);
+}
+.step-list li[data-done="true"] {
+  color: var(--text-secondary);
+}
+.step-list li[data-done="true"] .step-text {
+  /* Collapsed to one line rather than removed. A step that vanishes takes the
+     sense of the ones around it with it, and you cannot get it back if you
+     struck it off by mistake. */
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-decoration: line-through;
+  opacity: 0.65;
+}
+.step-list li[data-done="true"]::marker {
+  color: var(--text-secondary);
+}
+
+.step-progress {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+
+/* --- the editor's ingredient table ------------------------------------------ */
+
+.ingredient-editor {
+  border: var(--border-width) solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: var(--space-4) var(--space-5) var(--space-5);
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  align-items: flex-start;
+}
+.ingredient-editor legend {
+  font-size: var(--text-2xs);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  font-weight: var(--weight-semi);
+  padding: 0 var(--space-3);
+}
+.ingredient-rows,
+.contact-rows,
+.step-rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.ingredient-rows li {
+  display: grid;
+  grid-template-columns: 5rem 11rem minmax(8rem, 1fr) minmax(8rem, 1fr) auto;
+  gap: var(--space-3);
+  align-items: center;
+}
+@media (max-width: 60rem) {
+  .ingredient-rows li {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+.step-rows li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--space-3);
+  align-items: start;
+}
+/* A phone number or an email, then what to call it.
+
+   The value column is the wide one and the label the narrow one, which is the
+   opposite way round from the recipe rows above — there the quantity is a
+   number and the name is the prose. "(555) 123-4567 x2214" is 20 characters and
+   has to be readable in full while it is being typed, because a number the
+   typist cannot see the end of is a number that gets a digit wrong. */
+.contact-rows li {
+  display: grid;
+  grid-template-columns: minmax(14rem, 2fr) minmax(7rem, 1fr) auto;
+  gap: var(--space-3);
+  align-items: center;
+}
+@media (max-width: 44rem) {
+  /* The number takes the whole first line rather than being squeezed beside
+     its label; the label and the remove button share the second. */
+  .contact-rows li {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+  .contact-rows li > input:first-child {
+    grid-column: 1 / -1;
+  }
+}
+
+.ingredient-rows input,
+.ingredient-rows select,
+.contact-rows input,
+.step-rows textarea {
+  padding: var(--space-3) var(--space-4);
+  background: var(--bg-raised);
+  border: var(--border-width) solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+  min-width: 0;
+}
+.ingredient-rows .row-actions button,
+.contact-rows .row-actions button,
+.step-rows .row-actions button {
+  width: 1.75rem;
+  height: 1.75rem;
+  padding: 0;
+  font: inherit;
+  line-height: 1;
+  color: var(--text-secondary);
+  background: var(--bg-raised);
+  border: var(--border-width) solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+.ingredient-rows .row-actions button:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+.ingredient-editor > button {
+  padding: var(--space-2) var(--space-4);
+  background: transparent;
+  border: var(--border-width) solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.ingredient-editor > button:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.image-picker {
+  display: flex;
+  gap: var(--space-5);
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+.image-picker > div {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  align-items: flex-start;
+}
+.recipe-thumb-preview {
+  width: 8rem;
+  border-radius: var(--radius-sm);
+  border: var(--border-width) solid var(--line);
+}
+
+/* --- imported ingredient rows (SPEC 4.6) -------------------------------------
+   The line the site published, shown above the parse. The parser is allowed to
+   be wrong; what it is not allowed to do is hide what it was guessing from. */
+
+.ingredient-raw {
+  grid-column: 1 / -1;
+  font-size: var(--text-2xs);
+  color: var(--text-secondary);
+  font-family: var(--font-data);
+}
+.ingredient-rows li[data-needs-checking="true"] {
+  padding-left: var(--space-4);
+  border-left: var(--member-bar) solid var(--warning);
+}
+.ingredient-rows li[data-needs-checking="true"] .ingredient-raw {
+  color: var(--warning);
+  font-weight: var(--weight-semi);
+}
+
+/* --- the day / range picker (SPEC 4.3) ---------------------------------------
+   One calendar instead of two datetime fields. The selection reads as a band with
+   a solid disc at each end, which is the shape that says "these days" rather than
+   "these two dates" -- and a single day is one disc, not a one-day band.
+
+   Rounded here, unlike the rest of this design, and on purpose: a disc is what
+   makes an endpoint read as a point. The band between them keeps the square edges
+   so it reads as continuous. */
+
+.day-picker {
+  --day-size: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+.day-picker-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+.day-picker-nav strong {
+  font-size: var(--text-sm);
+}
+.day-picker-nav button {
+  width: 1.75rem;
+  height: 1.75rem;
+  padding: 0;
+  font: inherit;
+  line-height: 1;
+  color: var(--text-secondary);
+  background: var(--bg-raised);
+  border: var(--border-width) solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+.day-picker-nav button:hover {
+  color: var(--text-primary);
+  border-color: var(--accent);
+}
+
+.day-picker-weekdays,
+.day-picker-grid {
+  display: grid;
+  grid-template-columns: repeat(7, var(--day-size));
+  gap: 0;
+}
+.day-picker-weekdays span {
+  font-size: var(--text-2xs);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+.day-picker-day {
+  height: var(--day-size);
+  padding: 0;
+  font: inherit;
+  font-size: var(--text-xs);
+  color: var(--text-primary);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  /* The band is drawn by the cell background and the disc by an inner radius, so
+     neighbouring days in a range touch with no gap between them. */
+  border-radius: 0;
+}
+.day-picker-day[data-outside] {
+  color: var(--text-secondary);
+  opacity: 0.55;
+}
+.day-picker-day:hover {
+  background: var(--bg-hover);
+}
+/* Today, when it is not selected: a ring, not a fill. */
+.day-picker-day[data-today] span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: calc(var(--day-size) - 0.25rem);
+  height: calc(var(--day-size) - 0.25rem);
+  border: var(--border-width) solid var(--accent);
+  border-radius: 50%;
+}
+
+/* The days in between: a continuous band. */
+.day-picker-day[data-state="between"] {
+  background: var(--bg-active);
+}
+/* The ends: a filled disc sitting on the band. */
+.day-picker-day[data-state="single"],
+.day-picker-day[data-state="start"],
+.day-picker-day[data-state="end"] {
+  color: var(--accent-contrast);
+}
+.day-picker-day[data-state="single"] span,
+.day-picker-day[data-state="start"] span,
+.day-picker-day[data-state="end"] span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--day-size);
+  height: var(--day-size);
+  background: var(--accent);
+  border: 0;
+  border-radius: 50%;
+  font-weight: var(--weight-semi);
+}
+/* Half a band under each end, so the run reads as joined rather than as two
+   discs with a gap. `start` fills to its right, `end` to its left. */
+.day-picker-day[data-state="start"] {
+  background: linear-gradient(to right, transparent 50%, var(--bg-active) 50%);
+}
+.day-picker-day[data-state="end"] {
+  background: linear-gradient(to left, transparent 50%, var(--bg-active) 50%);
+}
+
+.when-summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  margin: 0 0 var(--space-3);
+  font-size: var(--text-sm);
+}
+
+/* --- the right-click menu (SPEC 4.3) -----------------------------------------
+   Positioned in viewport coordinates by lib/menuPosition.ts and portalled to
+   the body, so no ancestor can re-anchor it. z-index sits below the drag ghost:
+   the two are never on screen together, and if they somehow were, the thing
+   attached to the cursor should win. */
+
+.context-menu {
+  position: fixed;
+  z-index: 80;
+  min-width: 10rem;
+  padding: var(--space-2) 0;
+  background: var(--bg-raised);
+  border: var(--border-width) solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  /* The one place a shadow would earn its keep, and still not used: this design
+     has none anywhere, so the border does the separating. */
+}
+/* Grows out of the pointer rather than towards it. Set from the placement, so a
+   menu that flipped up expands upwards. */
+.context-menu[data-origin="top-left"] {
+  transform-origin: top left;
+}
+.context-menu[data-origin="top-right"] {
+  transform-origin: top right;
+}
+.context-menu[data-origin="bottom-left"] {
+  transform-origin: bottom left;
+}
+.context-menu[data-origin="bottom-right"] {
+  transform-origin: bottom right;
+}
+
+.context-menu-item {
+  display: block;
+  width: 100%;
+  padding: var(--space-3) var(--space-5);
+  background: transparent;
+  border: 0;
+  font: inherit;
+  font-size: var(--text-sm);
+  text-align: left;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+/* :focus-visible is not enough here. The first item is focused programmatically
+   when the menu opens, which is a keyboard-ish focus the browser may not think
+   deserves a ring -- and an item that is focused but unmarked means the next
+   Enter activates something invisible. */
+.context-menu-item:hover,
+.context-menu-item:focus {
+  background: var(--bg-hover);
+  outline: none;
+}
+.context-menu-item[data-danger] {
+  color: var(--danger);
+}
+.context-menu-item[data-danger]:hover,
+.context-menu-item[data-danger]:focus {
+  background: var(--danger);
+  color: var(--accent-contrast);
+}
+
+/* --- putting a recipe on the plan, from the recipe (SPEC 4.6) -----------------
+   A fortnight of the real plan rather than a date field, because "is Tuesday
+   already spoken for" is a question about the plan and a date input cannot
+   answer it. Two rows of seven, so the columns line up as weekdays. */
+
+.plan-picker-nav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin: var(--space-5) 0 var(--space-3);
+}
+.plan-picker-nav strong {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.plan-picker-nav > button:not(.link-button) {
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  font: inherit;
+  line-height: 1;
+  color: var(--text-secondary);
+  background: var(--bg-raised);
+  border: var(--border-width) solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.plan-picker-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+
+.plan-day {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-height: 5rem;
+  padding: var(--space-2) var(--space-3);
+  text-align: left;
+  color: var(--text-primary);
+  background: var(--bg-raised);
+  border: var(--border-width) solid var(--line);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+.plan-day:hover {
+  background: var(--bg-hover);
+}
+/* The choice, unmistakably. A picker where the selection is a one-pixel border
+   change is a picker people click twice to be sure. */
+.plan-day[data-selected="true"] {
+  border-color: var(--accent);
+  background: var(--bg-active);
+  box-shadow: inset 0 0 0 1px var(--accent);
+}
+.plan-day[data-today="true"] .plan-day-date {
+  color: var(--accent);
+  font-weight: var(--weight-semi);
+}
+/* Quieter, never refused: writing up what was actually cooked last night is a
+   real thing to want. */
+.plan-day[data-past="true"] {
+  opacity: 0.55;
+}
+
+.plan-day-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+.plan-day-weekday {
+  font-size: var(--text-2xs);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+.plan-day-date {
+  font-size: var(--text-sm);
+}
+.plan-day-taken {
+  font-size: var(--text-2xs);
+  line-height: 1.3;
+  color: var(--text-secondary);
+  overflow-wrap: anywhere;
+}
+/* The wide layout says what is there in words, so the mark is redundant. */
+.plan-day-mark {
+  display: none;
+}
+
+@media (max-width: 44rem) {
+  /* Seven columns on a phone is about 45px: room for a date and nothing else.
+     The grid keeps its shape — it is the thing being read — and the titles
+     become a dot, with the full list still on the button's own label where a
+     screen reader finds it. */
+  .plan-day {
+    min-height: 3.5rem;
+    padding: var(--space-2);
+  }
+  .plan-day-taken {
+    display: none;
+  }
+  .plan-day[data-taken="true"] .plan-day-mark {
+    display: block;
+    width: var(--space-2);
+    height: var(--space-2);
+    border-radius: 50%;
+    background: var(--text-secondary);
+  }
+}
+
+/* --- Mealie import (SPEC 4.6) ------------------------------------------------ */
+
+.mealie-import {
+  flex-direction: column;
+  align-items: stretch;
+}
+.mealie-preview {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  width: 100%;
+}
+
+/* --- the meal planner (SPEC 4.6, phase 5c) -----------------------------------
+   A week across, the recipe shelf beside it. The shelf has to be on screen at
+   the same time as the days, or dragging from one to the other is a scroll and
+   a guess. */
+
+.kitchen-views {
+  margin-bottom: var(--space-5);
+}
+
+.planner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 17rem;
+  gap: var(--space-6);
+  align-items: start;
+}
+@media (max-width: 68rem) {
+  .planner {
+    grid-template-columns: 1fr;
+  }
+}
+
+.planner-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: var(--space-3);
+  min-width: 0;
+}
+@media (max-width: 60rem) {
+  /* Seven columns stop being readable long before they stop fitting. Below
+     this the week reads as a list of days, which is what a phone wants. */
+  .planner-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.planner-day {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-width: 0;
+  padding: var(--space-3);
+  background: var(--bg-raised);
+  border: var(--border-width) solid var(--line);
+  border-radius: var(--radius-md);
+}
+.planner-day[data-today="true"] {
+  border-color: var(--accent);
+  box-shadow: inset 0 0 0 1px var(--accent);
+}
+.planner-day-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  padding-bottom: var(--space-2);
+  border-bottom: var(--border-width) solid var(--line);
+}
+
+.planner-slot {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-height: 3.5rem;
+  padding: var(--space-2);
+  border: var(--border-width) dashed transparent;
+  border-radius: var(--radius-sm);
+}
+.planner-slot h3 {
+  font-size: var(--text-2xs);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  font-weight: var(--weight-normal);
+}
+/* The slot a dragged item would land in. */
+.planner-slot[data-receiving="true"] {
+  border-color: var(--accent);
+  background: var(--bg-active);
+}
+
+.planned {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  background: var(--bg-sunken);
+  border-radius: var(--radius-sm);
+  border-left: var(--member-bar) solid var(--accent);
+  font-size: var(--text-xs);
+  cursor: grab;
+  flex-wrap: wrap;
+}
+.planned[data-dragging="true"] {
+  opacity: 0.4;
+  cursor: grabbing;
+}
+/* A recipe somebody else planned that this member may not open. The slot reads
+   as taken and the dish does not read at all. */
+.planned[data-hidden="true"] {
+  border-left-style: dashed;
+  border-left-color: var(--line-strong);
+  color: var(--text-secondary);
+  font-style: italic;
+}
+.planned-thumb {
+  width: 1.75rem;
+  height: 1.75rem;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  flex: none;
+}
+.planned-title {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* The controls always take their own line. Seven day columns on a 1600px screen
+   are about 190px each, and a thumbnail, a title and four controls do not fit
+   across that — they overflowed the column and sat on top of the next day,
+   which made the remove button unclickable because the hit test landed on the
+   neighbouring day. Found by driving it, not by looking at it. */
+.planned .row-actions {
+  flex: 1 0 100%;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+.planned .row-actions button,
+.planned .row-actions select {
+  padding: 0 var(--space-2);
+  min-width: 1.25rem;
+  font: inherit;
+  font-size: var(--text-2xs);
+  color: var(--text-secondary);
+  background: var(--bg-raised);
+  border: var(--border-width) solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  max-width: 100%;
+}
+
+.planner-add input {
+  width: 100%;
+  min-width: 0;
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-xs);
+  color: var(--text-primary);
+  background: transparent;
+  border: var(--border-width) dashed var(--line-strong);
+  border-radius: var(--radius-sm);
+}
+.planner-add input::placeholder {
+  color: var(--text-secondary);
+}
+
+.planner-picker {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-width: 0;
+  padding: var(--space-5);
+  background: var(--bg-raised);
+  border: var(--border-width) solid var(--line);
+  border-radius: var(--radius-md);
+  position: sticky;
+  top: var(--space-5);
+}
+.planner-picker h2 {
+  font-size: var(--text-md);
+}
+.planner-picker .search {
+  min-width: 0;
+  flex: none;
+}
+.picker-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  max-height: 30rem;
+  overflow-y: auto;
+  /* .visually-hidden labels inside are position:absolute; without a containing
+     block here they resolve against <html> and scroll the whole document
+     sideways. Same trap .table-frame and .month both hit. */
+  position: relative;
+  min-width: 0;
+}
+.picker-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  background: var(--bg-sunken);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-xs);
+  cursor: grab;
+  min-width: 0;
+}
+.picker-item select {
+  flex: none;
+  padding: 0 var(--space-2);
+  font: inherit;
+  font-size: var(--text-2xs);
+  color: var(--text-secondary);
+  background: var(--bg-raised);
+  border: var(--border-width) solid var(--line-strong);
+  border-radius: var(--radius-sm);
+}
+
+.planner-range {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+
+/* --- the recipe preview (SPEC 4.6) -------------------------------------------
+   A native <dialog>, so focus trapping, Escape and the inert background come
+   from the browser rather than from code that has to be kept correct. */
+
+.picker-name {
+  font: inherit;
+  text-align: left;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 0.2em;
+}
+.picker-name:hover {
+  text-decoration-color: var(--accent);
+  color: var(--accent);
+}
+
+.preview {
+  width: min(56rem, calc(100vw - var(--space-8)));
+  max-height: calc(100vh - var(--space-8));
+  padding: 0;
+  color: var(--text-primary);
+  background: var(--bg-raised);
+  border: var(--border-width) solid var(--line-strong);
+  border-radius: var(--radius-md);
+  /* The dialog is its own scroller. Without this a long method pushes the
+     footer off the bottom of the screen and the Close button with it. */
+  overflow: auto;
+}
+.preview::backdrop {
+  background: var(--scrim);
+}
+
+.preview-head {
+  display: flex;
+  gap: var(--space-6);
+  align-items: flex-start;
+  padding: var(--space-6);
+  border-bottom: var(--border-width) solid var(--line);
+  flex-wrap: wrap;
+}
+.preview-head > div {
+  flex: 1 1 18rem;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.preview-head h2 {
+  font-size: var(--text-xl);
+}
+/* Same rule as .recipe-photo, and for the same reason: a flex item's automatic
+   minimum size is the image's intrinsic width unless min-width says otherwise,
+   which is how a 730px photo ignores every width you give it. */
+.preview-photo {
+  flex: none;
+  width: 14rem;
+  max-width: 100%;
+  min-width: 0;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  border: var(--border-width) solid var(--line);
+}
+
+.preview-body {
+  display: grid;
+  grid-template-columns: minmax(14rem, 20rem) minmax(0, 1fr);
+  gap: var(--space-7);
+  padding: var(--space-6);
+  align-items: start;
+}
+@media (max-width: 48rem) {
+  .preview-body {
+    grid-template-columns: 1fr;
+  }
+}
+.preview-body h3 {
+  font-size: var(--text-md);
+  padding-bottom: var(--space-3);
+  border-bottom: var(--border-width) solid var(--line);
+  margin-bottom: var(--space-4);
+}
+/* Reading, not cooking: the steps here are not the strike-off kind. */
+.preview-steps {
+  font-size: var(--text-sm);
+  gap: var(--space-4);
+}
+
+.preview-actions {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  gap: var(--space-4);
+  justify-content: flex-end;
+  align-items: center;
+  padding: var(--space-5) var(--space-6);
+  background: var(--bg-raised);
+  border-top: var(--border-width) solid var(--line);
+}
+.preview-actions select {
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+  background: var(--bg-raised);
+  border: var(--border-width) solid var(--line-strong);
+  border-radius: var(--radius-sm);
+}
+
+/* --- the shopping list (SPEC 4.6, phase 5d) ----------------------------------
+   Used standing up, one-handed, in a shop. Rows are taller than anywhere else
+   in the app on purpose: this is the one screen where a thumb, not a mouse, is
+   the pointing device, and a 32px table row is not a target for one.
+
+   Nothing here reads its own colour. `.uncombined` carries the words as well,
+   because a flag that only exists as a tint says nothing to somebody who cannot
+   see it, and this one is the difference between "1.5 kg" and two lines that
+   could not be added. */
+
+.shopping {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-7);
+}
+
+.aisle h2 {
+  font-family: var(--font-ui);
+  font-size: var(--text-2xs);
+  font-weight: var(--weight-semi);
+  text-transform: uppercase;
+  letter-spacing: var(--track-label);
+  color: var(--text-secondary);
+  padding-bottom: var(--space-3);
+  border-bottom: var(--border-width) solid var(--line);
+  margin-bottom: var(--space-3);
+}
+
+.shopping-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.shopping-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  /* Banded, not ruled — the same treatment every list in this app gets. */
+  padding: var(--space-2) var(--space-4);
+  min-height: 2.75rem;
+  /* Wraps rather than overflows. In a column layout the controls genuinely do
+     not fit beside the name on a narrow screen, and a control that hangs past
+     its column's edge has its hit test land on the neighbouring list — which is
+     how the meal planner's remove button became unclickable. Two lines is a
+     cost; an unclickable control is a defect. */
+  flex-wrap: wrap;
+}
+.shopping-row:nth-child(even) {
+  background: var(--bg-row-alt);
+}
+.shopping-row[data-checked="true"] .shopping-name {
+  color: var(--text-secondary);
+  text-decoration: line-through;
+}
+
+/* The whole row is the target, not the 16px box inside it. */
+/* The amount sits *under* the name, always, not beside it.
+   Every list is a column now, and in a 400px column a name and an amount side
+   by side either collide or wrap somewhere different on every row. A two-row
+   grid is the same shape on all of them: the tick spans both rows, the name is
+   the first, the amount is the second. Deterministic beats clever here — this
+   is read one-handed, in a shop, at a glance. */
+.shopping-tick {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: var(--space-4);
+  align-items: center;
+  flex: 1 1 6rem;
+  min-width: 0;
+  cursor: pointer;
+  padding: var(--space-3) 0;
+}
+.shopping-tick input[type="checkbox"] {
+  grid-row: span 2;
+}
+.shopping-tick input[type="checkbox"] {
+  flex: none;
+  width: 1.15rem;
+  height: 1.15rem;
+  accent-color: var(--accent);
+}
+
+/* A floor, and it is load-bearing. `flex: 1 1 auto` with `min-width: 0` lets
+   this shrink to *zero* width when the row is tight — measured at 130→130px —
+   and the amount beside it, which will not shrink, then paints straight over
+   the wrapped name. A basis the name cannot go below makes the amount wrap
+   instead, which is the outcome somebody can actually read. */
+.shopping-name {
+  min-width: 0;
+  font-size: var(--text-base);
+}
+
+.shopping-amount {
+  /* Row two of the tick, under the name. Never truncated: "1 1/2 tablespoons"
+     cut short is worse than a slightly taller row. */
+  grid-column: 2;
+  color: var(--text-secondary);
+  font-family: var(--font-data);
+  font-size: var(--text-sm);
+}
+
+.uncombined {
+  flex: none;
+  font-size: var(--text-2xs);
+  text-transform: uppercase;
+  letter-spacing: var(--track-label);
+  color: var(--warning);
+  border: var(--border-width) solid var(--warning);
+  border-radius: var(--radius-sm);
+  padding: 0 var(--space-3);
+  white-space: nowrap;
+}
+
+.shopping-by {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: var(--text-2xs);
+  color: var(--text-secondary);
+}
+
+.shopping-row .icon-button {
+  flex: none;
+  background: none;
+  border: 0;
+  color: var(--text-secondary);
+  font-size: var(--text-md);
+  line-height: 1;
+  padding: var(--space-3) var(--space-4);
+}
+.shopping-row .icon-button:hover {
+  color: var(--danger);
+}
+
+.shopping-add {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  align-items: center;
+  margin-bottom: var(--space-6);
+}
+.shopping-add input#shopping-name {
+  flex: 1 1 14rem;
+  min-width: 0;
+}
+.shopping-add .quantity {
+  flex: 0 0 4.5rem;
+  width: 4.5rem;
+}
+.shopping-add .alert {
+  flex: 1 1 100%;
+}
+
+/* The shopper's name is the first thing to go when there is genuinely no room:
+   the mark keeps the hue, and the row is already struck through. Below 22rem
+   only, because the name is the accessible half of that pair and dropping it
+   any earlier trades information for nothing. */
+@media (max-width: 22rem) {
+  .shopping-by-name {
+    display: none;
+  }
+}
+
+/* The aisle control. Muted until it is set, because an unfilled one is an
+   invitation and a filled one is a fact. */
+.aisle-set {
+  flex: none;
+  background: none;
+  /* Transparent rather than dashed while it is unset. Twenty dashed boxes down
+     the right-hand edge read as twenty things needing attention; an aisle is an
+     offer, not a task. The border arrives on hover and once it is set. */
+  border: var(--border-width) solid transparent;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: var(--text-2xs);
+  text-transform: uppercase;
+  letter-spacing: var(--track-label);
+  padding: var(--space-1) var(--space-3);
+  white-space: nowrap;
+}
+.aisle-set[data-unset="false"] {
+  border-color: var(--line-strong);
+  color: var(--text-primary);
+}
+/* An unset section is an offer, not a task. It keeps its space — so nothing
+   jumps — and stays out of the way until the row is touched. Opacity rather
+   than `display: none`, because a control removed from the page is a control
+   removed from the tab order, and this one has to stay reachable. */
+.aisle-set[data-unset="true"] {
+  opacity: 0.35;
+}
+.shopping-row:hover .aisle-set[data-unset="true"],
+.shopping-row:focus-within .aisle-set[data-unset="true"] {
+  opacity: 0.75;
+}
+.aisle-set:hover,
+.aisle-set:focus-visible {
+  color: var(--text-primary);
+  border-color: var(--accent);
+  opacity: 1;
+}
+
+.aisle-input {
+  flex: none;
+  width: 8rem;
+  font-size: var(--text-xs);
+}
+
+/* --- shopping: many lists (SPEC 4.12, phase 6) --------------------------------
+   Columns, like the task board, because the thing this page does that the old
+   single list could not is move a line from one list to another — and a target
+   you cannot see is a target you cannot drag to. */
+
+.lists {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(21rem, 1fr));
+  gap: var(--space-6);
+  align-items: start;
+}
+@media (max-width: 48rem) {
+  /* One column below this. Two 21rem columns on a phone is two half-columns. */
+  .lists {
+    grid-template-columns: 1fr;
+  }
+}
+
+.list-column {
+  background: var(--bg-sunken);
+  border: var(--border-width) solid var(--line);
+  border-radius: var(--radius-md);
+  padding: var(--space-5);
+  min-width: 0;
+}
+/* The list a dragged line would land on. */
+.list-column[data-receiving="true"] {
+  border-color: var(--accent);
+  background: var(--bg-active);
+}
+
+.list-head h2 {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-4);
+  font-size: var(--text-md);
+  margin: 0;
+}
+
+.list-badge {
+  font-size: var(--text-2xs);
+  text-transform: uppercase;
+  letter-spacing: var(--track-label);
+  color: var(--accent);
+  border: var(--border-width) solid var(--accent);
+  border-radius: var(--radius-sm);
+  padding: 0 var(--space-3);
+  white-space: nowrap;
+}
+
+.list-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  margin: var(--space-3) 0 var(--space-5);
+  font-size: var(--text-2xs);
+  text-transform: uppercase;
+  letter-spacing: var(--track-label);
+  color: var(--text-secondary);
+}
+/* Who can see a list is said in words. A private list that announced itself
+   only by a tint would be indistinguishable from a shared one to anyone who
+   cannot see the tint, and this is the one fact on the page that must not be
+   guessed at. */
+.list-meta [data-visibility="private"] {
+  color: var(--warning);
+  font-weight: var(--weight-semi);
+}
+.list-meta [data-visibility="assignees"] {
+  color: var(--text-primary);
+}
+
+.shared-mark {
+  display: inline-flex;
+}
+
+.list-empty {
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+  padding: var(--space-5) 0;
+}
+
+/* Narrow on purpose. Every row carries one, so a control wide enough to read
+   "Move to…" costs a second line on every row in a column that is 400px wide
+   — which is most of them. The label beside it says the whole sentence. */
+.move-to {
+  flex: none;
+  width: 2.9rem;
+  font-size: var(--text-2xs);
+  padding-inline: var(--space-2);
+  text-align: center;
+}
+
+/* The name may wrap; the row may not. A row that wraps in a column layout is
+   twice as tall as it needs to be, and there are twenty of them. */
+.shopping-tick {
+  flex: 1 1 6rem;
+}
+
+.clear-ticked {
+  margin-top: var(--space-5);
+}
+
+/* The list editor sits above the columns rather than beside them: it is a
+   decision about the whole list, and losing sight of the other lists while
+   making it is fine. */
+.list-editor {
+  margin-bottom: var(--space-6);
+  padding: var(--space-5);
+  border: var(--border-width) solid var(--accent);
+  border-radius: var(--radius-md);
+  background: var(--bg-raised);
+}
+
+.list-editor fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+.list-editor legend {
+  font-size: var(--text-2xs);
+  text-transform: uppercase;
+  letter-spacing: var(--track-label);
+  color: var(--text-secondary);
+  padding: 0 0 var(--space-3);
+}
+.list-editor .check {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+}
+
+/* A line being dragged to another list. */
+.shopping-row[data-dragging="true"] {
+  opacity: 0.4;
+}
+.shopping-row[draggable="true"] {
+  cursor: grab;
+}
+
+/* --- the contact directory (SPEC 4.7, phase 7) --------------------------------
+   Looked up, not browsed. The numbers are on the list rather than behind a
+   record, because the whole job of this page is answering "what is the
+   plumber's number" without a click. */
+
+.directory {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(19rem, 1fr));
+  gap: var(--space-5);
+}
+
+.contact-row {
+  background: var(--bg-raised);
+  border: var(--border-width) solid var(--line);
+  border-radius: var(--radius-md);
+  padding: var(--space-5);
+  min-width: 0;
+}
+
+.contact-name {
+  background: none;
+  border: 0;
+  padding: 0;
+  font-family: var(--font-ui);
+  font-size: var(--text-md);
+  font-weight: var(--weight-semi);
+  color: var(--text-primary);
+  text-align: left;
+  cursor: pointer;
+}
+.contact-name:hover {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.contact-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  margin: var(--space-2) 0 var(--space-4);
+  font-size: var(--text-2xs);
+  text-transform: uppercase;
+  letter-spacing: var(--track-label);
+  color: var(--text-secondary);
+}
+
+/* Said in words, never only as a tint: whether a record is private is the one
+   thing on this page nobody should have to guess at. */
+.private-flag {
+  color: var(--warning);
+  font-weight: var(--weight-semi);
+}
+
+.contact-lines {
+  list-style: none;
+  margin: 0 0 var(--space-4);
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+}
+.contact-lines a {
+  font-family: var(--font-data);
+  color: var(--text-primary);
+  text-decoration: none;
+}
+.contact-lines a:hover {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.contact-detail {
+  max-width: 44rem;
+}
+.contact-detail h1 {
+  margin-bottom: 0;
+}
+.contact-detail h2 {
+  font-size: var(--text-2xs);
+  text-transform: uppercase;
+  letter-spacing: var(--track-label);
+  color: var(--text-secondary);
+  margin: var(--space-7) 0 var(--space-3);
+}
+.contact-detail address {
+  display: flex;
+  flex-direction: column;
+  font-style: normal;
+  font-size: var(--text-sm);
+  line-height: var(--leading-snug);
+}
+.contact-notes {
+  white-space: pre-wrap;
+  font-family: var(--font-prose);
+  line-height: var(--leading-prose);
+}
+
+.contact-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin: 0;
+}
+
+/* City, State and Zip across one line, sized the way they are written: a state
+   is two letters and a ZIP is five, so giving all three an equal third of the
+   row wastes the space the city needs. */
+.address-row {
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--space-4);
+}
+@media (max-width: 34rem) {
+  .address-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* --- health records (SPEC 4.8, phase 8) ---------------------------------------
+   Deliberately plain. Nothing on this page uses colour to mean "good" or "bad",
+   because 4.8 forbids anything resembling an assessment and colour is the
+   easiest way to imply one by accident. The only accented thing here is the
+   reorder prompt, which is a comparison between two numbers the member typed
+   about a box of pills. */
+
+.stat-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+  gap: var(--space-5);
+  margin: var(--space-6) 0;
+  padding: var(--space-5);
+  border: var(--border-width) solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--bg-raised);
+}
+.stat-row dt {
+  font-size: var(--text-2xs);
+  text-transform: uppercase;
+  letter-spacing: var(--track-label);
+  color: var(--text-secondary);
+}
+.stat-row dd {
+  margin: var(--space-2) 0 0;
+  font-family: var(--font-data);
+  font-size: var(--text-lg);
+}
+
+.record-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.record-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  min-height: 2.75rem;
+}
+.record-row:nth-child(even) {
+  background: var(--bg-row-alt);
+}
+.record-row[data-stopped="true"] .record-value {
+  color: var(--text-secondary);
+  text-decoration: line-through;
+}
+.record-value {
+  font-size: var(--text-base);
+  font-weight: var(--weight-medium);
+  min-width: 6rem;
+}
+.record-when {
+  margin-left: auto;
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+  font-family: var(--font-data);
+}
+
+.lab-report {
+  margin-bottom: var(--space-7);
+}
+.lab-report h2 {
+  font-size: var(--text-md);
+  margin-bottom: var(--space-4);
+}
+
+.sharing {
+  max-width: 36rem;
+}
+.share-list {
+  list-style: none;
+  margin: var(--space-5) 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.share-list .check {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+/* --- the shared modal ---------------------------------------------------------
+   One dialog for the day view, the event editor and the contact editor. The
+   native <dialog> brings the focus trap, Escape and the inert background; this
+   is only what it looks like. */
+
+.modal {
+  width: min(38rem, calc(100vw - var(--space-8)));
+  max-height: calc(100vh - var(--space-8));
+  padding: 0;
+  color: var(--text-primary);
+  background: var(--bg-raised);
+  border: var(--border-width) solid var(--line-strong);
+  border-radius: var(--radius-md);
+  /* The dialog is its own scroller: without this a long form pushes its own
+     Save button off the bottom of the screen. */
+  overflow: auto;
+}
+.modal[data-wide="true"] {
+  width: min(52rem, calc(100vw - var(--space-8)));
+}
+.modal::backdrop {
+  background: var(--scrim);
+}
+
+.modal-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-5);
+  padding: var(--space-6) var(--space-6) var(--space-4);
+  border-bottom: var(--border-width) solid var(--line);
+  /* Sticky, so the close button is reachable while a long day is scrolled. */
+  position: sticky;
+  top: 0;
+  background: var(--bg-raised);
+}
+.modal-head h2 {
+  margin: 0;
+  font-size: var(--text-lg);
+}
+.modal-body {
+  padding: var(--space-6);
+}
+.modal-foot {
+  display: flex;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-6) var(--space-6);
+}
+
+/* A day's events inside a modal, and the same list above the event form. */
+.day-events {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.day-events > li {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-4);
+}
+/* The rows fill the dialog. `.agenda-row` is sized by its content on the agenda
+   page, where it sits in a narrow column; in a modal that leaves every event as
+   a short stub against a wide empty box. */
+.day-events > li > .agenda-row {
+  width: 100%;
+}
+.day-events > li[data-current="true"] {
+  color: var(--accent);
+  font-weight: var(--weight-semi);
+}
+
+.editor-day {
+  margin-bottom: var(--space-6);
+  padding-bottom: var(--space-5);
+  border-bottom: var(--border-width) solid var(--line);
+}
+.editor-day h3 {
+  font-size: var(--text-2xs);
+  text-transform: uppercase;
+  letter-spacing: var(--track-label);
+  color: var(--text-secondary);
+  margin-bottom: var(--space-4);
+}
+
+/* --- the month grid: hover, day click, drag ----------------------------------
+   The day background is a <button> now, so the whole day opens the day. It has
+   to be reset to look like nothing, because a seven-across row of buttons that
+   look like buttons is a wall. */
+
+/* The day background is a <button> now, so the whole day opens the day. It has
+   to be reset to look like nothing — but carefully:
+   
+   `background: transparent` is not optional. Without it the browser's default
+   button face paints every in-month day mid-grey, which is exactly what it did
+   until this was measured.
+   
+   And the reset must NOT say `border: 0`. This block sits later in the file
+   than the rule that draws the grid lines, so a blanket border reset silently
+   removed them — the rule was present and simply losing, which is the same
+   cascade trap the scope-picker hint fell into. Only the button's own default
+   border is cleared, by restating the grid ones. */
+.month-cell {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  border-top: var(--border-width) solid var(--line);
+  border-left: var(--border-width) solid var(--line);
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+.month-week:first-child .month-cell {
+  border-top: 0;
+}
+.month-cell:first-child {
+  border-left: 0;
+}
+/* The hover is driven by a data attribute rather than :hover, because the
+   background and the day number are siblings in the same grid — the same
+   reason `data-today` is set on both of them. */
+.month-cell[data-hovered="true"] {
+  background: var(--bg-hover);
+}
+.month-cell[data-receiving="true"] {
+  background: var(--bg-active);
+  outline: var(--border-width) solid var(--accent);
+  outline-offset: -1px;
+}
+.month-cell-head[data-hovered="true"] {
+  color: var(--text-primary);
+}
+
+.chip-event[data-draggable="true"] {
+  cursor: grab;
+  position: relative;
+}
+/* The one it came from, while it is in the air. Faint rather than hidden: it is
+   what says where the event will stay if you let go where you started. 0.3
+   rather than the old 0.5, because there is now a lifted copy under the cursor
+   to read it against. */
+.chip-event[data-dragging="true"] {
+  opacity: 0.3;
+  cursor: grabbing;
+}
+
+/* The edge handles. Wider than they look so they can actually be grabbed: 4px
+   of visible edge is not a pointer target, and this is the control that stops
+   somebody opening a modal to move a date by one day. */
+.chip-handle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 10px;
+  cursor: ew-resize;
+}
+.chip-handle[data-edge="start"] {
+  left: -2px;
+}
+.chip-handle[data-edge="end"] {
+  right: -2px;
+}
+.chip-event[data-draggable="true"]:hover .chip-handle {
+  background: linear-gradient(
+    to right,
+    color-mix(in srgb, var(--calendar-on-hue) 45%, transparent),
+    transparent
+  );
+}
+.chip-handle[data-edge="end"] {
+  background-image: none;
+}
+
+/* Multi-day events get their own agenda section, so the range reads as the
+   headline rather than a time nobody asked for. */
+.agenda-spanning .agenda-range {
+  width: auto;
+  white-space: nowrap;
+}
+
+/* The bar mid-drag: drawn where it would land, and translucent so the row it
+   is crossing stays readable underneath. */
+.month-span[data-previewing="true"] {
+  opacity: 0.85;
+  pointer-events: none;
+}
+.month-span[data-previewing="true"] .chip-event {
+  outline: var(--border-width) dashed var(--calendar-on-hue);
+  outline-offset: -2px;
+}
+
+/* The bar, lifted.
+
+   A copy of the bar that hangs off the cursor at the point it was grabbed, so
+   the gesture reads as picking something up. The original stays put and faded,
+   which is what tells you where it will go back to if you let go here.
+
+   No shadow: this design has none anywhere, so one would arrive as a stranger.
+   The lift is carried by a ring in the fill's own contrast colour, and by the
+   fact that the thing is following the cursor — which is signal enough.
+
+   **No rotation.** A tilt was tried and it does not survive the range of widths
+   here: a bar is anything from one column to seven, and 1.5deg that is
+   imperceptible on a 90px chip lifts one end of a week-long bar by some thirty
+   pixels, so it reads as a wedge rather than as a lift. Any transform whose
+   effect is a function of width has the same problem — the object is the same
+   thing at 90px and at 1200px, so the treatment has to be too.
+
+   No padding either, unlike `.month-span`. The width comes from the bar's own
+   box, which is the chip *inside* that padding — adding it back would make the
+   lifted copy narrower than the thing it is a copy of. */
+.drag-ghost {
+  position: fixed;
+  z-index: 90;
+  pointer-events: none;
+}
+/* The ring does the whole job now, so it is worth two pixels rather than one. */
+.drag-ghost .chip-event {
+  box-shadow: 0 0 0 2px var(--calendar-on-hue);
+  cursor: grabbing;
+}
+
+/* While something is in the air. Without this the drag paints the whole month
+   in selection blue and reads as a failed text highlight rather than a move. */
+.month-body[data-dragging="true"] {
+  cursor: grabbing;
+  user-select: none;
+}
+.month-body[data-dragging="true"] .chip-event,
+.month-body[data-dragging="true"] .month-cell {
+  cursor: grabbing;
+}
+
+/* The amount, clickable where it sits. Quiet until touched, like the section
+   picker — but an overridden one keeps a mark, because a line that does not
+   change when the meal plan does should say why. */
+.amount-set {
+  appearance: none;
+  background: transparent;
+  border: var(--border-width) solid transparent;
+  border-radius: var(--radius-sm);
+  padding: 0 var(--space-2);
+  cursor: pointer;
+  text-align: right;
+}
+.amount-set:hover,
+.amount-set:focus-visible {
+  border-color: var(--accent);
+  color: var(--text-primary);
+}
+.amount-set[data-overridden="true"] {
+  color: var(--text-primary);
+  border-bottom-color: var(--accent);
+  border-bottom-style: dashed;
+}
+
+.amount-edit {
+  display: inline-flex;
+  gap: var(--space-2);
+  align-items: center;
+}
+.amount-edit .quantity {
+  width: 4rem;
+}
+.amount-edit select {
+  font-size: var(--text-2xs);
+  max-width: 7rem;
+}
+
+/* --- members and permissions (SPEC 4.2, 4.9) ---------------------------------
+   The grid shows deviations from a role default, so every control reads as a
+   choice against a baseline rather than as a switch with no context. */
+
+.permissions {
+  margin-top: var(--space-8);
+  max-width: 44rem;
+}
+.permissions h2 {
+  font-size: var(--text-md);
+  margin-bottom: var(--space-3);
+}
+
+.permission-list {
+  list-style: none;
+  margin: var(--space-5) 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: var(--space-4) var(--space-6);
+}
+.permission-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-2) 0;
+  border-bottom: var(--border-width) solid var(--line);
+}
+.permission-list label {
+  font-size: var(--text-sm);
+}
+.permission-list select {
+  flex: 0 1 11rem;
+  font-size: var(--text-2xs);
+}
+
+/* A destructive confirmation. The button is the only red thing on the page,
+   because if everything is a warning nothing is. */
+.button.danger {
+  background: var(--danger);
+  color: var(--text-inverse);
+}
+.button.danger:disabled {
+  opacity: 0.45;
+}
+.delete-list {
+  margin: var(--space-4) 0;
+  padding-left: var(--space-7);
+  font-size: var(--text-sm);
+}
+
+/* --- API tokens (SPEC 4.10) ------------------------------------------------
+   A short section: the table, the badges and the fields are all shared
+   primitives. What is here is the handful of things a token list needs that
+   nothing else does. */
+
+.token-table td strong {
+  display: block;
+}
+
+/* Created / expires, under the name. The dates matter but not enough to widen
+   the table by two columns for them. */
+.token-sub {
+  display: block;
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+}
+
+.token-prefix {
+  font-family: var(--font-code);
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.token-scopes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+
+/* A revoked token stays in the list for its last-used record, and has to read
+   as spent rather than as one of the live ones. */
+.token-table tr[data-inactive] td:not(:has(.badge)) {
+  color: var(--text-secondary);
+}
+
+/* The one place the whole secret is on screen. Monospace so a hand-copied
+   character is unambiguous, and full width so it is never truncated: a token
+   with its tail cut off looks copyable and is not. */
+.token-secret {
+  width: 100%;
+  font-family: var(--font-code);
+  font-size: var(--text-sm);
+}
+
+.scope-grid {
+  display: grid;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+
+.scope-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  background: var(--bg-sunken);
+  border-radius: var(--radius-sm);
+}
+
+.scope-row select {
+  min-width: 9rem;
+}
+
+/* --- the phone app pointer (Settings) --------------------------------------
+   Numbered because it genuinely is a sequence: the "Add to Home screen" step
+   only exists once the page is open in Chrome on the phone. */
+.phone-steps {
+  margin: var(--space-5) 0;
+  padding-left: var(--space-7);
+  max-width: 62ch;
+  color: var(--text-secondary);
+}
+
+.phone-steps li {
+  margin-bottom: var(--space-3);
+  line-height: var(--leading-normal);
+}
+
+.phone-steps code {
+  font-family: var(--font-code);
+  font-size: var(--text-xs);
+  overflow-wrap: anywhere;
+}
+
+/* An <a> styled as a button still needs to sit on the text baseline like one. */
+a.button {
+  display: inline-block;
+  text-decoration: none;
+}

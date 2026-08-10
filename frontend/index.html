@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home Ops</title>
+    <meta name="color-scheme" content="light dark" />
+    <script>
+      // Applied before first paint so the page never flashes the wrong theme.
+      // Mirrors applyThemePreference() in src/lib/theme.ts: an explicit choice
+      // stamps data-theme, "system" removes it and lets the media query govern.
+      try {
+        var stored = localStorage.getItem('home-ops.theme')
+        if (stored === 'light' || stored === 'dark') {
+          document.documentElement.setAttribute('data-theme', stored)
+        }
+      } catch (error) {
+        /* storage blocked; the media query still gives a sensible default */
+      }
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

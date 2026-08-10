@@ -1,0 +1,34 @@
+#!/command/with-contenv bash
+# Block until Postgres answers, then make sure the application's database exists.
+#
+# This is what `depends_on: condition: service_healthy` was doing in
+# docker-compose.yml. s6-rc only knows that the postgres service has been
+# *started*, which for a database is not the same as being ready to take a
+# connection -- and the API's first act is to open one.
+set -euo pipefail
+
+POSTGRES_USER="${POSTGRES_USER:-home_ops}"
+POSTGRES_DB="${POSTGRES_DB:-home_ops}"
+DEADLINE=$((SECONDS + 90))
+
+until pg_isready -h 127.0.0.1 -p 5432 -U "$POSTGRES_USER" -q; do
+    if [ "$SECONDS" -ge "$DEADLINE" ]; then
+        echo "wait-for-db: Postgres did not become ready within 90s" >&2
+        exit 1
+    fi
+    sleep 1
+done
+
+# initdb creates the superuser and `postgres`/`template1`, never the application
+# database. Created here rather than in init-data because it needs a running
+# server, and this is the first point at which there is one.
+export PGPASSWORD="${POSTGRES_PASSWORD:-}"
+exists="$(psql -h 127.0.0.1 -U "$POSTGRES_USER" -d postgres -tAc \
+    "SELECT 1 FROM pg_database WHERE datname = '${POSTGRES_DB}'")"
+
+if [ "$exists" != "1" ]; then
+    echo "wait-for-db: creating database ${POSTGRES_DB}"
+    createdb -h 127.0.0.1 -U "$POSTGRES_USER" "$POSTGRES_DB"
+fi
+
+echo "wait-for-db: ready"

@@ -1,0 +1,37 @@
+#!/command/with-contenv bash
+# Apply migrations, but only when explicitly asked.
+#
+# SPEC §0: "Migrations, always -- versioned and reversible", and CLAUDE.md:
+# "Production never auto-migrates." That rule exists because an automatic
+# `upgrade head` on boot turns a container restart into a schema change nobody
+# chose the timing of, and there is no undo for the case where it goes wrong at
+# 3am.
+#
+# It also assumed you were already at a terminal running compose. This image is
+# meant to be deployed as an appliance, where "run one more command inside the
+# container before it works" is exactly the friction it exists to remove. So the
+# rule is kept and an opt-in added: RUN_MIGRATIONS is off by default, and
+# turning it on is a deliberate act by whoever deploys it, which is what the
+# rule was actually protecting.
+set -euo pipefail
+
+# alembic's env.py builds its URL from the same Settings the app does, so it
+# needs the same loopback override. Shared with the api service rather than
+# copied: this script is where the missing copy was found.
+. /etc/s6-overlay/scripts/app-env
+
+case "${RUN_MIGRATIONS:-false}" in
+    1 | true | TRUE | True | yes | YES)
+        echo "migrate: RUN_MIGRATIONS is set -- running alembic upgrade head"
+        cd /app
+        # app-env exported the overrides, and s6-setuidgid passes the
+        # environment through, so alembic sees them.
+        s6-setuidgid appuser alembic upgrade head
+        echo "migrate: schema is at head"
+        ;;
+    *)
+        echo "migrate: skipped (RUN_MIGRATIONS is not set)."
+        echo "migrate: apply them yourself with:"
+        echo "migrate:   docker exec <container> home-ops-migrate"
+        ;;
+esac

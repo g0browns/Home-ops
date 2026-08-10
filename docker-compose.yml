@@ -1,0 +1,69 @@
+# =============================================================================
+# Home Ops - the whole application in one container.
+#
+#   cp .env.example .env          # set POSTGRES_PASSWORD before the first start
+#   docker compose up -d --build
+#
+# If your Docker's Compose has trouble building, build the image directly and
+# then start it:
+#
+#   docker build -t home-ops:single .
+#   docker compose up -d
+#
+# One service, one volume, one port. nginx serves the built frontend and proxies
+# /api to the application over loopback, so the browser only ever sees one origin.
+# See README.md.
+# =============================================================================
+
+name: home-ops
+
+services:
+  app:
+    build:
+      context: .
+    # Named, so `up` uses the image `docker build -t home-ops:single .` produced
+    # rather than trying to build one itself. See the header.
+    image: home-ops:single
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      # The database is inside this container, so the compose service name from
+      # the other file is not a hostname here. Set explicitly because `env_file`
+      # is read first and a .env carried over from the multi-container stack says
+      # POSTGRES_HOST=db -- which resolves to nothing and fails on the first real
+      # request rather than at startup. The api service script belts-and-braces
+      # this too; see container/rootfs/.../api/run.
+      POSTGRES_HOST: 127.0.0.1
+      POSTGRES_PORT: 5432
+      # Blank means "assemble it from the POSTGRES_* values". Set DATABASE_URL in
+      # .env to point at a Postgres you
+      # run elsewhere; the bundled one then simply goes unused.
+      DATABASE_URL: ""
+      APP_ENV: production
+      # nginx and the API talk over loopback, so the only peer whose forwarding
+      # headers could ever be read is a process inside this container. That is
+      # strictly narrower than the multi-container stack, where the trusted range
+      # is the whole compose subnet. `middleware/client_ip.py` needs this to be
+      # non-empty or every request is logged as coming from 127.0.0.1.
+      TRUSTED_PROXY_IPS: 127.0.0.1/32
+      UPLOAD_ROOT: /data/uploads
+      PGDATA: /data/postgres
+      # Off by default: SPEC §0 says production never auto-migrates. Set it in
+      # .env to have the container apply migrations on start, which is the
+      # sensible trade for an appliance deployment. See container/rootfs/
+      # etc/s6-overlay/scripts/migrate for the argument.
+      RUN_MIGRATIONS: ${RUN_MIGRATIONS:-false}
+    volumes:
+      # One volume holding both the cluster and the uploaded images. Two things
+      # that must be backed up together are easier to keep together than to
+      # remember to pair -- the same reasoning that made scripts/backup.* emit a
+      # single archive.
+      - home_ops_data:/data
+    ports:
+      - "${WEB_PORT:-8080}:8080"
+    # The image declares its own HEALTHCHECK covering nginx, the API and
+    # Postgres; nothing to add here.
+
+volumes:
+  home_ops_data:

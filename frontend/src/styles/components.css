@@ -1,0 +1,300 @@
+/* Shared primitives. Tokens only — no literal colours, sizes or radii. */
+
+/* --- page scaffolding ------------------------------------------------------ */
+
+.page {
+  padding: var(--space-6) var(--space-7) var(--space-9);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  min-width: 0;
+}
+
+/* Flex items default to `min-width: auto`, which lets them grow to their
+   content instead of shrinking — so a wide table would push the whole page
+   sideways even though its frame is set to scroll. This is what makes
+   `overflow-x` on .table-frame actually take effect. */
+.page > * {
+  min-width: 0;
+}
+
+.page-head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-5);
+  flex-wrap: wrap;
+  padding-bottom: var(--space-4);
+  border-bottom: var(--border-width) solid var(--line-strong);
+}
+.page-head h1 {
+  font-size: var(--text-xl);
+}
+.page-summary {
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+  margin-left: auto;
+}
+.page-summary strong {
+  color: var(--text-primary);
+  font-weight: var(--weight-semi);
+}
+.page-intro {
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+  max-width: 62ch;
+}
+
+/* --- member marks (the Rota device) ---------------------------------------- */
+
+.member-chip {
+  display: inline-block;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-sm);
+  color: var(--member-on-hue);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semi);
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.member-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: var(--radius-sm);
+  color: var(--member-on-hue);
+  font-size: var(--text-2xs);
+  font-weight: var(--weight-bold);
+  letter-spacing: 0;
+  flex: none;
+}
+.member-mark[data-size="sm"] {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+/* The leading colour bar is the table cell itself — see MemberBarCell for why. */
+
+/* --- data table ------------------------------------------------------------
+   Banded rather than ruled: a planner reads as bands of rows, and hairlines
+   everywhere would fight the member colour bar for attention. */
+
+.table-frame {
+  border: var(--border-width) solid var(--line);
+  background: var(--bg-raised);
+  border-radius: var(--radius-md);
+
+  /* Three properties, all load-bearing, for one behaviour: a wide table
+     scrolls inside its own frame and the page body never scrolls sideways.
+
+     overflow-x    the scrolling itself.
+     min-width     a flex item defaults to `min-width: auto` and would grow to
+                   its content instead of shrinking, so the frame would simply
+                   widen rather than scroll.
+     position      makes the frame a containing block. Without it, absolutely
+                   positioned descendants — every `.visually-hidden` caption and
+                   column-header label — escape the clip and stretch the root's
+                   scroll width, so the page scrolled sideways even though the
+                   frame itself was the right size. */
+  overflow-x: auto;
+  min-width: 0;
+  position: relative;
+}
+
+table.data {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+}
+
+table.data thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  text-align: left;
+  padding: var(--space-3) var(--space-5);
+  background: var(--bg-raised);
+  border-bottom: var(--border-width) solid var(--line-strong);
+  font-size: var(--text-2xs);
+  font-weight: var(--weight-semi);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+table.data tbody tr {
+  height: var(--row-height);
+}
+table.data tbody tr:nth-child(even) {
+  background: var(--bg-row-alt);
+}
+table.data tbody tr:hover {
+  background: var(--bg-hover);
+}
+
+table.data td {
+  padding: var(--space-3) var(--space-5);
+  vertical-align: middle;
+}
+
+/* The leading cell IS the member colour bar: empty, 3px wide, full row height. */
+table.data td.lead,
+table.data th.lead {
+  width: var(--member-bar);
+  min-width: var(--member-bar);
+  padding: 0;
+}
+
+table.data .cell-name {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  font-weight: var(--weight-medium);
+}
+table.data .num {
+  text-align: right;
+  font-family: var(--font-data);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+table.data .muted {
+  color: var(--text-secondary);
+}
+
+/* --- badges ----------------------------------------------------------------
+   A word, always. Colour is a second channel, never the only one. */
+
+.badge {
+  display: inline-block;
+  padding: 0 var(--space-3);
+  border: var(--border-width) solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+.badge[data-tone="accent"] {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.badge[data-tone="positive"] {
+  border-color: var(--positive);
+  color: var(--positive);
+}
+.badge[data-tone="danger"] {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+/* --- forms ----------------------------------------------------------------- */
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.field label {
+  font-size: var(--text-2xs);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  font-weight: var(--weight-semi);
+}
+.field input {
+  padding: var(--space-4) var(--space-5);
+  background: var(--bg-raised);
+  border: var(--border-width) solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-base);
+}
+.field input::placeholder {
+  color: var(--text-secondary);
+}
+.field-hint {
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-6);
+  background: var(--accent);
+  color: var(--accent-contrast);
+  border: var(--border-width) solid var(--accent);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semi);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+}
+.button:hover:not(:disabled) {
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+}
+.button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.alert {
+  padding: var(--space-4) var(--space-5);
+  border-left: var(--member-bar) solid var(--danger);
+  background: var(--bg-row-alt);
+  color: var(--text-primary);
+  font-size: var(--text-sm);
+}
+
+/* --- sign-in / setup ------------------------------------------------------- */
+
+.entry {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: var(--space-7) var(--space-6);
+}
+.entry-card {
+  width: min(24rem, 100%);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+.entry-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  font-weight: var(--weight-bold);
+  font-size: var(--text-lg);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+}
+.entry-brand .brand-rule {
+  width: var(--member-bar);
+  height: 1.25rem;
+  background: var(--accent);
+}
+.entry-card form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+.entry-note {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+
+/* --- misc ------------------------------------------------------------------ */
+
+.loading {
+  padding: var(--space-7);
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+}

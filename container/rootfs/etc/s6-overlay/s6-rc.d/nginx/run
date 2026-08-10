@@ -1,0 +1,8 @@
+#!/command/with-contenv bash
+# The reverse proxy, and the only process in this container that listens on a
+# port anybody outside can reach.
+#
+# `daemon off;` so it stays in the foreground and s6 can supervise it; nginx
+# forking into the background would leave s6 watching a process that has already
+# exited and restarting it forever.
+exec nginx -g 'daemon off;'
