@@ -112,22 +112,5 @@ message from a wrong password.
 **Nothing at your LAN address, but `localhost` works.** Add that address to
 `APP_HOSTS` and restart.
 
-## Maintainer notes
-
-Before submitting to Community Applications:
-
-- [ ] Publish `ghcr.io/g0browns/home-ops:latest` (multi-arch `amd64`/`arm64` —
-      the Dockerfile already handles both) and make the package public.
-- [ ] Push this directory as its own public GitHub repository and confirm the
-      name matches every raw URL below; they currently assume
-      `g0browns/home-ops-unraid` on branch `main`:
-  - `ca_profile.xml` → `<Icon>`
-  - `templates/home-ops.xml` → `<Icon>`, `<TemplateURL>`
-- [ ] Add a `screenshot.png` and a `<Screenshot>` tag to the template.
-- [ ] Optionally create an Unraid forum support topic and put it in `<Support>`
-      (a GitHub issues URL is accepted).
-- [ ] Run the Community Apps validation workflow, then `/submit`.
-
-## Licence
 
 MIT — see [LICENSE](LICENSE). Home Ops itself is MIT too.
