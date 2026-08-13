@@ -1,0 +1,113 @@
+# =============================================================================
+# Build the single-container image and push it to GitHub Container Registry.
+#
+# This is what makes the Unraid template work: `unraid-ca/templates/home-ops.xml`
+# names `ghcr.io/g0browns/home-ops` as its <Repository>, and Unraid only ever
+# *pulls* — it never builds. Nothing at that address means nothing to install.
+# The image name below and the one in that template must stay in step.
+#
+# Two moving tags, deliberately different:
+#
+#   :latest   only ever a released version. Cut a release by pushing a tag:
+#               git tag -a v0.1.0 -m "0.1.0" && git push origin v0.1.0
+#             That is what Unraid users are pulling, so an ordinary commit to
+#             main must not be able to move it.
+#   :main     every commit to main. Point a test container at it; leave the
+#             household on :latest.
+#
+# A pull request builds but does not push, so a Dockerfile change that cannot
+# build is caught before it is merged rather than on release day.
+# =============================================================================
+
+name: Publish container image
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*.*.*"]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  # Lowercase, always: registries reject mixed case, and the GitHub repository
+  # is `Home-ops`. Written out rather than derived from ${{ github.repository }}
+  # so that it is greppable against the Unraid template.
+  IMAGE_NAME: ghcr.io/g0browns/home-ops
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      # Required to push to ghcr.io with the automatic GITHUB_TOKEN.
+      packages: write
+
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # Skipped on pull requests: there is nothing to log in for, and a PR from
+      # a fork has no write access to packages anyway.
+      - name: Log in to ghcr.io
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Work out tags
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=raw,value=latest,enable=${{ startsWith(github.ref, 'refs/tags/v') }}
+          labels: |
+            org.opencontainers.image.title=Home Ops
+            org.opencontainers.image.description=Self-hosted household management: tasks, calendar, recipes, shopping, contacts, notes and health records.
+            org.opencontainers.image.licenses=MIT
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          # linux/amd64 only. Unraid is x86_64, and the Dockerfile's arm64 path
+          # would have to be emulated through QEMU on this runner — a Debian
+          # base, a PostgreSQL install, an npm build and a pip install, each
+          # several times slower. If you ever need an arm64 image, add
+          # `linux/arm64` here and expect the job to take the best part of an
+          # hour, or move it to an arm64 runner.
+          platforms: linux/amd64
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          # Layer cache between runs. The Dockerfile is ordered so that apt,
+          # s6 and the Python dependencies sit above the application code; this
+          # is what makes that ordering pay off in CI as well as for the people
+          # pulling the image.
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          # Without this, buildx attaches a provenance attestation and the
+          # package page grows an `unknown/unknown` platform entry beside the
+          # real one. Harmless, but it reads as a broken build.
+          provenance: false
+
+      - name: Where it went
+        if: github.event_name != 'pull_request'
+        run: |
+          echo "Pushed:"
+          echo "${{ steps.meta.outputs.tags }}" | sed 's/^/  /'
+          echo
+          echo "FIRST PUSH ONLY: the package is created private. Make it public at"
+          echo "  https://github.com/users/g0browns/packages/container/home-ops/settings"
+          echo "or Unraid gets a 403 trying to pull it."

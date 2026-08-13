@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<CommunityApplications>
+  <Profile>
+Templates for **Home Ops** — a self-hosted household management system: chores, a shared calendar, recipes and meal planning, groceries, contacts, notes and health records, running on hardware you own.
+
+Home Ops ships as a **single container**: FastAPI, nginx and PostgreSQL 16 together under s6-overlay, with one appdata path and one port. There is nothing to wire together and nothing to sign up for — no cloud account, no API key, no telemetry.
+
+It is built for a household rather than a company, so **visibility is per record** (private, shared with named people, or the whole household) and there is no administrator override on any of it.
+
+Support and issues: https://github.com/g0browns/Home-ops/issues
+  </Profile>
+
+  <Icon>https://raw.githubusercontent.com/g0browns/home-ops-unraid/main/icon.svg</Icon>
+  <WebPage>https://github.com/g0browns/Home-ops</WebPage>
+</CommunityApplications>
